@@ -2,34 +2,23 @@
 from pathlib import Path
 import os
 
-# =========================
-# Paths
-# =========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# =========================
-# Security
-# =========================
+# ============================
+# Core
+# ============================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key-change-me")
-
-# DEBUG is controlled by environment variable:
-# - Locally you’ll usually have DEBUG=True (default below)
-# - On Render we’ll set DEBUG=False
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
     "localhost",
-    ".onrender.com",   # Render will use something like grmart.onrender.com
+    "127.0.0.1",
+    "grmart.onrender.com",  # your Render URL
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.onrender.com",
-]
-
-# =========================
-# Applications
-# =========================
+# ============================
+# Apps
+# ============================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -38,16 +27,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # your apps
     "store",
     "cart",
     "orders",
     "accounts",
 ]
 
-# =========================
-# Middleware
-# =========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -61,13 +46,10 @@ MIDDLEWARE = [
 ROOT_URLCONF = "shop.urls"
 WSGI_APPLICATION = "shop.wsgi.application"
 
-# =========================
-# Templates
-# =========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # project-level templates (base.html, etc.)
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -80,17 +62,25 @@ TEMPLATES = [
     },
 ]
 
-# =========================
+# ============================
 # Database
-# =========================
-# Use MySQL locally (DEBUG=True), SQLite on Render (DEBUG=False)
-if DEBUG:
-    # --- MySQL (Workbench) ---
+# ============================
+
+# If RENDER is set (we’ll set it in Render env vars), use SQLite.
+if os.getenv("RENDER", ""):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+else:
+    # Your existing local MySQL for development
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": "grmart",               # same as in your SQL: USE grmart;
-            "USER": "grmart_user",          # user you granted privileges to
+            "NAME": "grmart",
+            "USER": "grmart_user",
             "PASSWORD": "StrongPassword123",
             "HOST": "127.0.0.1",
             "PORT": "3306",
@@ -101,36 +91,24 @@ if DEBUG:
             },
         }
     }
-else:
-    # --- Simple SQLite for Render deployment ---
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
 
-# =========================
+# ============================
 # Static & Media
-# =========================
-# Static files (CSS, JS, images)
+# ============================
 STATIC_URL = "/static/"
 
-# Where your custom CSS / images live in the repo
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# Where collectstatic will put files for production
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Media uploads (product images, etc.)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# =========================
-# Internationalization / timezone
-# =========================
+# ============================
+# Locale / Time
+# ============================
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
@@ -138,15 +116,15 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# =========================
+# ============================
 # Auth redirects
-# =========================
+# ============================
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"      # after login go to welcome page
-LOGOUT_REDIRECT_URL = "/"     # after logout go to welcome page
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
-# =========================
-# Email (dev: print to console)
-# =========================
+# ============================
+# Email – dev (console)
+# ============================
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@grmart.local"
