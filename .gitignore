@@ -11,3 +11,6 @@ __pycache__/
 
 # SQLite DB (only if you don't want to track it)
 db.sqlite3
+# Python bytecode / cache
+__pycache__/
+*.pyc
