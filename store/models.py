@@ -10,8 +10,7 @@ class Product(models.Model):
     image_url = models.URLField(blank=True, null=True)                        # external links
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'products'
+   
         
 
     @property
