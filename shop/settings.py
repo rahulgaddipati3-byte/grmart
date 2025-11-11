@@ -7,18 +7,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ============================
 # Core
 # ============================
+
+# Use a real secret key in production (we pass it via env on Render)
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key-change-me")
+
+# DEBUG will be False on Render (set DEBUG=False there)
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "grmart.onrender.com",  # your Render URL
-]
+# Allowed hosts differ for local vs Render
+if os.getenv("RENDER") == "1":
+    ALLOWED_HOSTS = ["grmart.onrender.com"]
+    # Needed for secure POSTs (login, signup, etc.) when DEBUG=False
+    CSRF_TRUSTED_ORIGINS = ["https://grmart.onrender.com"]
+else:
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # ============================
 # Apps
 # ============================
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -27,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # project apps
     "store",
     "cart",
     "orders",
@@ -66,8 +74,8 @@ TEMPLATES = [
 # Database
 # ============================
 
-# If RENDER is set (we’ll set it in Render env vars), use SQLite.
-if os.getenv("RENDER", ""):
+# On Render (RENDER=1 in env) -> use SQLite file db.sqlite3
+if os.getenv("RENDER") == "1":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -75,7 +83,7 @@ if os.getenv("RENDER", ""):
         }
     }
 else:
-    # Your existing local MySQL for development
+    # Local development -> your MySQL Workbench database
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
@@ -95,12 +103,15 @@ else:
 # ============================
 # Static & Media
 # ============================
+
 STATIC_URL = "/static/"
 
+# Where your neon.css, images, etc. live in the repo
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# Where collectstatic puts files for production
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
@@ -109,6 +120,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 # ============================
 # Locale / Time
 # ============================
+
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
@@ -119,12 +131,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ============================
 # Auth redirects
 # ============================
+
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/"      # change to "/products/" if you want to land on products after login
 LOGOUT_REDIRECT_URL = "/"
 
 # ============================
 # Email – dev (console)
 # ============================
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@grmart.local"
