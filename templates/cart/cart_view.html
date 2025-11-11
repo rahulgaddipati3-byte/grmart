@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Your Cart • G.R Mart{% endblock %}
+
+{% block content %}
+<style>
+  /* Dark glass panel card for the whole cart */
+  .cart-box {
+    background: rgba(8, 12, 25, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    padding: 1.5rem;
+    color: #f2f6ff;
+  }
+
+  /* Absolutely kill Bootstrap white background on this table */
+  .cart-table,
+  .cart-table * {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  .cart-table thead th {
+    color: #cfe0ff !important;
+    font-weight: 600 !important;
+    border-color: rgba(200, 215, 255, 0.15) !important;
+  }
+
+  .cart-table tbody td {
+    color: #e9efff !important;
+    border-color: rgba(200, 215, 255, 0.12) !important;
+  }
+
+  .cart-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  .cart-table tfoot th {
+    color: #ffffff !important;
+    font-weight: 700;
+    border-color: rgba(200, 215, 255, 0.18) !important;
+  }
+
+  .cart-product { font-weight: 600; color: #ffffff !important; }
+  .cart-price   { color: #dbe8ff !important; }
+  .cart-total   { color: #ffffff !important; font-weight: 700; }
+
+  /* Input in qty column */
+  .cart-qty-input {
+    background:#0f172a !important;
+    color:#f9fbff !important;
+    border:1px solid rgba(185,204,255,0.5) !important;
+    border-radius: 10px;
+    text-align:center;
+    width:80px;
+    height:36px;
+  }
+
+  /* Buttons on dark background */
+  .cart-box .btn-outline-secondary {
+    color:#e0e0e0;
+    border-color:rgba(255,255,255,0.25);
+  }
+  .cart-box .btn-outline-secondary:hover {
+    background:rgba(255,255,255,0.08);
+    color:#ffffff;
+  }
+
+  .cart-box .btn-outline-danger {
+    color:#ff6b81;
+    border-color:rgba(255,255,255,0.18);
+  }
+  .cart-box .btn-outline-danger:hover {
+    background:rgba(255,96,122,0.18);
+    color:#ffe5ea;
+  }
+</style>
+
+<h2 class="mb-4">Your Cart</h2>
+
+{% if items %}
+  <div class="table-responsive cart-box">
+    <table class="table align-middle mb-0 cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th style="width:220px;">Qty</th>
+          <th style="width:140px;">Price</th>
+          <th style="width:160px;">Total</th>
+          <th style="width:120px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td class="cart-product">{{ item.name }}</td>
+
+            <td>
+              <form action="{% url 'cart:update_qty' item.id %}"
+                    method="post"
+                    class="d-inline-flex align-items-center gap-2">
+                {% csrf_token %}
+                <input type="number"
+                       name="qty"
+                       value="{{ item.qty }}"
+                       min="0"
+                       class="cart-qty-input"
+                       onchange="this.form.submit()">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                  Update
+                </button>
+              </form>
+            </td>
+
+            <td class="cart-price">₹ {{ item.price }}</td>
+            <td class="cart-total">₹ {{ item.subtotal|floatformat:2 }}</td>
+
+            <td>
+              <a href="{% url 'cart:remove_item' item.id %}"
+                 class="btn btn-outline-danger btn-sm">
+                Remove
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <th colspan="3" class="text-end">Grand Total</th>
+          <th class="cart-total">₹ {{ grand_total|floatformat:2 }}</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <a href="{% url 'cart:clear_cart' %}" class="btn btn-outline-secondary">
+      Clear Cart
+    </a>
+    <a href="{% url 'orders:checkout' %}" class="btn btn-success">
+      Proceed to Checkout
+    </a>
+    <a href="{% url 'store:product_list' %}" class="btn btn-outline-secondary">
+      Continue Shopping
+    </a>
+  </div>
+
+{% else %}
+  <div class="alert alert-info">
+    Your cart is empty.
+  </div>
+  <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-2">
+    Browse Products
+  </a>
+{% endif %}
+{% endblock %}

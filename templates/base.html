@@ -1,0 +1,177 @@
+﻿{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}G.R Mart{% endblock %}</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Main theme CSS -->
+  <link href="{% static 'css/neon.css' %}" rel="stylesheet">
+
+  <style>
+    /* Give room for navbar + subnav */
+    body { padding-top: 90px; }
+
+    /* Small glowing dot next to brand */
+    .brand-dot {
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#5bb1ff,#a387ff);
+      box-shadow:0 0 8px rgba(91,177,255,.8);
+      margin-right:6px;
+    }
+
+    /* Amazon-like sub navigation bar */
+    .subnav-bar {
+      position:fixed;
+      top:56px;           /* default navbar height */
+      left:0;
+      right:0;
+      z-index:1028;
+      background:rgba(9,14,30,.96);
+      border-bottom:1px solid rgba(255,255,255,.05);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+    }
+    .subnav-bar a {
+      font-size:0.9rem;
+      color:rgba(233,239,255,.85);
+      text-decoration:none;
+      margin-right:1.25rem;
+      white-space:nowrap;
+    }
+    .subnav-bar a:hover {
+      color:#ffffff;
+    }
+
+    /* Make product prices clearly visible */
+    .price-tag {
+      color:#f5f7ff;
+      font-weight:600;
+    }
+  </style>
+</head>
+<body>
+
+<!-- MAIN NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+      <span class="brand-dot"></span>
+      <span>G.R Mart</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+
+      <!-- Left: main sections -->
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'store:product_list' %}">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'cart:cart_view' %}">Cart</a>
+        </li>
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'orders:order_history' %}">Orders</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <!-- Search -->
+      <form class="d-none d-md-flex me-3" role="search" method="get" action="{% url 'store:product_list' %}">
+        <input class="form-control" name="q" type="search" placeholder="Search products..." aria-label="Search">
+      </form>
+
+      <!-- Right side -->
+      <div class="d-flex gap-2 align-items-center">
+        <!-- Theme toggle -->
+        <button type="button" class="theme-toggle btn btn-sm btn-outline-light border-0" id="themeToggle" title="Toggle theme">
+          🌙
+        </button>
+
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                {{ user.get_username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'orders:order_history' %}">
+                    Order history
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <!-- Logout must be POST -->
+                  <form method="post" action="{% url 'logout' %}" class="px-3 py-1 m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item text-danger p-0">
+                      Logout
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'signup' %}">Register</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SUB NAV (Amazon-style category row) -->
+<div class="subnav-bar">
+  <div class="container d-flex justify-content-between align-items-center py-2">
+    <div class="d-flex align-items-center flex-wrap">
+      <a href="{% url 'home' %}">G.R Mart</a>
+      <a href="{% url 'store:product_list' %}">All</a>
+      <a href="{% url 'store:product_list' %}?tag=bestsellers">Bestsellers</a>
+      <a href="{% url 'store:product_list' %}?tag=deals">Today&#39;s Deals</a>
+      <a href="{% url 'store:product_list' %}?category=mobiles">Mobiles</a>
+      <a href="{% url 'store:product_list' %}?category=electronics">Electronics</a>
+      <a href="{% url 'store:product_list' %}?category=fashion">Fashion</a>
+      <a href="{% url 'store:product_list' %}?category=home-kitchen">Home &amp; Kitchen</a>
+    </div>
+    <div class="d-none d-sm-block">
+      <a href="{% url 'cart:cart_view' %}">Cart</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="container my-4">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Simple dark/light toggle
+  const btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+    });
+  }
+</script>
+</body>
+</html>

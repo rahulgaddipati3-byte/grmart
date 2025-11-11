@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Products • G.R Mart{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Products</h2>
+
+{% if products %}
+  <div class="row g-3">
+
+    {% for p in products %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <!-- use product-card so neon.css styles apply -->
+        <div class="card product-card h-100 border-0 shadow-sm">
+
+          {# Image: prefer DB URL (image_url) → uploaded file (image) → placeholder #}
+          {% if p.image_url %}
+            <img
+              src="{{ p.image_url }}"
+              alt="{{ p.name }}"
+              class="card-img-top product-img"
+              loading="lazy"
+              decoding="async"
+              onerror="this.onerror=null;this.src='{% static 'img/placeholder-product.png' %}';"
+            >
+          {% elif p.image %}
+            <img
+              src="{{ p.image.url }}"
+              alt="{{ p.name }}"
+              class="card-img-top product-img"
+              loading="lazy"
+              decoding="async"
+              onerror="this.onerror=null;this.src='{% static 'img/placeholder-product.png' %}';"
+            >
+          {% else %}
+            <img
+              src="{% static 'img/placeholder-product.png' %}"
+              alt="{{ p.name }}"
+              class="card-img-top product-img"
+              loading="lazy"
+              decoding="async"
+            >
+          {% endif %}
+
+          <div class="card-body d-flex flex-column">
+            <h6 class="card-title mb-1">{{ p.name }}</h6>
+
+            <!-- brighter price text -->
+            <div class="price-tag mb-2">
+              ₹ {{ p.price }}
+            </div>
+
+            <div class="mt-auto">
+              <form method="post" action="{% url 'cart:add_to_cart' p.id %}">
+                {% csrf_token %}
+                <div class="d-flex gap-2">
+                  <input
+                    type="number"
+                    name="qty"
+                    value="1"
+                    min="1"
+                    class="form-control form-control-sm"
+                    style="max-width:90px"
+                  >
+                  <button type="submit" class="btn btn-gradient w-100">
+                    Add to Cart
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+{% else %}
+  <div class="alert alert-secondary">
+    No products yet. Add some in the <a href="/admin/">admin</a>.
+  </div>
+{% endif %}
+{% endblock %}

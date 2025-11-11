@@ -1,0 +1,20 @@
+:root{
+  --dark-start:#111827; /* slate-900 */
+  --dark-end:#1f2937;   /* slate-800 */
+}
+.bg-gradient-dark{
+  background: linear-gradient(90deg, var(--dark-start), var(--dark-end));
+}
+.bg-body{
+  background: #f6f7fb;
+}
+.hero{
+  background: linear-gradient(135deg, #1d4ed8, #9333ea);
+}
+.product-card{
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.product-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.12)!important;
+}

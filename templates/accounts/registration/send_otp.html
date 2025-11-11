@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Send OTP</h1>
+    <form method="post">
+      {% csrf_token %}
+      <input type="email" name="email" placeholder="your@email.com" required>
+      <button type="submit">Send OTP</button>
+    </form>
+  </body>
+</html>
+
+

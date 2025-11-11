@@ -1,0 +1,132 @@
+﻿{% extends "base.html" %}
+<div style="background:red;color:white;padding:10px;text-align:center;">
+   THIS IS CART.HTML
+</div>
+
+{% block title %}Your Cart • G.R Mart{% endblock %}
+
+{% block content %}
+<style>
+/* Force Bootstrap table background to disappear */
+.cart-table * {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #f2f6ff !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+/* Dark glass container */
+.cart-box {
+  background: rgba(8, 12, 25, 0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.75);
+  padding: 1.5rem;
+}
+
+/* Headers and highlight */
+.cart-table thead th {
+  color: #cfe0ff !important;
+  font-weight: 600 !important;
+}
+
+.cart-table tbody td {
+  color: #e9efff !important;
+}
+
+.cart-table tfoot th {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.cart-product { font-weight: 600; color: #fff !important; }
+.cart-price   { color: #dbe8ff !important; }
+.cart-total   { color: #ffffff !important; font-weight: 700; }
+
+/* Buttons */
+.cart-box .btn-outline-secondary {
+  color: #e0e0e0;
+  border-color: rgba(255,255,255,0.2);
+}
+.cart-box .btn-outline-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.cart-box .btn-outline-danger {
+  color: #ff6b81;
+  border-color: rgba(255,255,255,0.15);
+}
+.cart-box .btn-outline-danger:hover {
+  background: rgba(255,99,132,0.15);
+  color: #fff;
+}
+</style>
+
+<h2 class="mb-4">Your Cart</h2>
+
+{% if items %}
+  <div class="table-responsive cart-box">
+    <table class="table align-middle mb-0 cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th style="width:220px;">Qty</th>
+          <th style="width:140px;">Price</th>
+          <th style="width:160px;">Total</th>
+          <th style="width:120px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for row in items %}
+        <tr>
+          <td class="cart-product">{{ row.product.name }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <a href="{% url 'cart:dec' row.product.id %}" class="btn btn-outline-secondary btn-sm">−</a>
+              <form action="{% url 'cart:set' row.product.id %}" method="post" class="d-inline-flex align-items-center">
+                {% csrf_token %}
+                <input
+                  type="number"
+                  name="qty"
+                  value="{{ row.qty }}"
+                  min="0"
+                  max="999"
+                  class="form-control form-control-sm text-center bg-dark text-light border-secondary"
+                  style="width:80px;"
+                  onchange="this.form.submit()">
+              </form>
+              <a href="{% url 'cart:inc' row.product.id %}" class="btn btn-outline-secondary btn-sm">+</a>
+            </div>
+          </td>
+          <td class="cart-price">₹ {{ row.product.price }}</td>
+          <td class="cart-total">₹ {{ row.line_total|floatformat:2 }}</td>
+          <td>
+            <a class="btn btn-outline-danger btn-sm" href="{% url 'cart:remove' row.product.id %}">Remove</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3" class="text-end">Grand Total</th>
+          <th class="cart-total">₹ {{ grand_total|floatformat:2 }}</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <a href="{% url 'cart:clear' %}" class="btn btn-outline-secondary">Clear Cart</a>
+    <a href="{% url 'orders:checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+    <a href="{% url 'store:product_list' %}" class="btn btn-outline-secondary">Continue Shopping</a>
+  </div>
+
+{% else %}
+  <div class="alert alert-info">
+    Your cart is empty.
+  </div>
+  <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-2">Browse Products</a>
+{% endif %}
+{% endblock %}

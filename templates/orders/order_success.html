@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.id }} • G.R Mart{% endblock %}
+
+{% block content %}
+  <h2>Thank you! 🎉</h2>
+  <p>Your order <strong>#{{ order.id }}</strong> has been placed successfully.</p>
+
+  <h4 class="mt-4">Items</h4>
+  <ul>
+    {% for item in items %}
+      <li>{{ item.product }} × {{ item.quantity|default:item.qty }} – ₹ {{ item.price }}</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Login • G.R Mart{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:520px;">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="mb-3">Login</h4>
+
+      {% if form.errors %}
+        <div class="alert alert-danger">Please check your username/password.</div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+      </form>
+
+      <hr class="my-4">
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'password_reset' %}">Forgot password?</a>
+        <a href="{% url 'signup' %}">Create an account</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

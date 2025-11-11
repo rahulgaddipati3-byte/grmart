@@ -1,0 +1,826 @@
+/* ================================
+   G.R Mart – Dark Neon Theme CSS
+   Single file replacement
+   ================================ */
+
+/* -------- CSS Variables -------- */
+:root {
+  --bg-0: #070b14;
+  --bg-1: #0b1020;
+  --bg-2: #0f172a;
+  --surf: rgba(255,255,255,.06);
+
+  --text-0: #ffffff;     /* pure white when needed */
+  --text-1: #e9efff;     /* main body text */
+  --text-2: #cfe0ff;     /* headings / table headers */
+  --text-3: #9db5ff;     /* secondary text */
+  --muted:  #7f8db2;     /* helper text */
+
+  --brand-1: #5bb1ff;
+  --brand-2: #a387ff;
+  --brand-3: #31e2ff;
+
+  --ok:     #2ecc71;
+  --warn:   #f39c12;
+  --danger: #ff5f7e;
+
+  --ring: rgba(94, 234, 212, 0.35);
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+/* -------- Global Base -------- */
+html, body {
+  height: 100%;
+  background: radial-gradient(1200px 800px at 15% 10%, #0d1224, transparent 60%),
+              radial-gradient(1000px 800px at 90% 10%, #0a0f1f, transparent 55%),
+              var(--bg-0);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--brand-1); text-decoration: none; }
+a:hover { color: var(--brand-3); }
+
+.container, .container-fluid { position: relative; z-index: 1; }
+
+/* -------- Navbar -------- */
+.navbar {
+  background: linear-gradient(180deg, rgba(12,18,36,.9), rgba(12,18,36,.75));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--surf);
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link { color: var(--text-1) !important; }
+.navbar .nav-link:hover { color: var(--text-0) !important; }
+
+/* -------- Search (optional) -------- */
+input[type="search"],
+.form-control[type="search"] {
+  background: var(--bg-2);
+  color: var(--text-1);
+  border: 1px solid var(--surf);
+}
+input[type="search"]::placeholder { color: var(--muted); }
+
+/* -------- Buttons -------- */
+.btn {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.09);
+  transition: transform .12s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  border: 1px solid rgba(99, 167, 255, .35);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(91,177,255,.25);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(91,177,255,.35); }
+
+.btn-outline-light {
+  color: var(--text-1);
+  background: transparent;
+  border-color: rgba(255,255,255,.18);
+}
+.btn-outline-light:hover {
+  color: #fff;
+  border-color: #dbe7ff;
+  background: linear-gradient(90deg, #5bb1ff33, #a387ff33);
+}
+
+/* Small neon pill (for CTA-like links) */
+.btn-glow {
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 10px 35px rgba(91,177,255,.35);
+}
+
+/* -------- Cards / Surfaces -------- */
+.card,
+.surface {
+  background: linear-gradient(180deg, rgba(14,20,40,.65), rgba(9,14,28,.65));
+  border: 1px solid var(--surf);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  color: var(--text-1);
+}
+
+/* -------- Product Grid -------- */
+.product-card {
+  background: linear-gradient(180deg, rgba(14,20,40,.72), rgba(9,14,28,.62));
+  border: 1px solid var(--surf);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.product-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(138, 173, 255, .35);
+  box-shadow: 0 18px 40px rgba(12, 18, 36, .66), 0 0 0 1px rgba(138, 173, 255, .14) inset;
+}
+
+.product-card .card-img-top {
+  height: 190px;
+  object-fit: cover;
+  background: #0a0e1a;
+}
+
+.product-card .card-title { color: var(--text-1); font-weight: 600; }
+.product-card .card-text { color: var(--muted); }
+
+.price-tag { color: var(--text-2); font-weight: 700; }
+
+/* Quantity pill inside product cards */
+.qty-pill {
+  background: var(--bg-2);
+  border: 1px solid rgba(185,204,255,.28);
+  color: var(--text-1);
+  border-radius: 999px;
+  height: 36px;
+}
+
+/* -------- Forms / Inputs -------- */
+.form-control, input, select, textarea {
+  background: var(--bg-2);
+  color: var(--text-1);
+  border: 1px solid rgba(185,204,255,.28);
+  border-radius: 12px;
+}
+.form-control:focus, input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(185,204,255,.55);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+/* -------- Tables (base) -------- */
+.table {
+  color: var(--text-1);
+  border-color: var(--surf);
+}
+.table th,
+.table thead th {
+  color: var(--text-2);
+  border-color: var(--surf) !important;
+}
+.table td {
+  color: var(--text-1);
+  border-color: var(--surf) !important;
+}
+.table-hover > tbody > tr:hover {
+  --hover: rgba(255,255,255,.035);
+  background: linear-gradient(90deg, rgba(99,167,255,.025), rgba(163,135,255,.025)) !important;
+}
+
+/* -------- Cart Page (high-contrast) -------- */
+.cart-page .table thead th {
+  color: var(--text-2);
+  letter-spacing: .3px;
+  font-weight: 600;
+}
+.cart-page .table tbody td {
+  color: var(--text-1);
+}
+
+.cart-page .product-name   { color: var(--text-1); font-weight: 600; }
+.cart-page .line-price     { color: var(--text-2); font-weight: 600; }
+.cart-page .line-total     { color: #d9e3ff; font-weight: 700; }
+.cart-page .grand-total    { color: #e2ebff; font-weight: 800; font-size: 1.05rem; }
+
+.cart-page input[type="number"] {
+  background: var(--bg-2);
+  color: var(--text-1);
+  border: 1px solid rgba(185,204,255,.45);
+  border-radius: 10px;
+  width: 90px;
+  height: 36px;
+}
+
+.cart-page .btn-update {
+  background: transparent;
+  color: var(--text-1);
+  border-color: rgba(185,204,255,.35);
+}
+.cart-page .btn-update:hover {
+  background: linear-gradient(90deg, #5bb1ff33, #a387ff33);
+  border-color: #dbe7ff;
+  color: #fff;
+}
+
+.cart-page .btn-remove {
+  color: #ffd2da;
+  border-color: rgba(255,95,126,.35);
+}
+.cart-page .btn-remove:hover {
+  color: #fff;
+  border-color: rgba(255,95,126,.6);
+  background: linear-gradient(90deg, #ff5f7e33, #ff8aa233);
+}
+
+.cart-page .btn-checkout {
+  background: linear-gradient(90deg, #22c55e, #2ecc71);
+  border: 1px solid rgba(46,204,113,.35);
+  color: #06120d;
+  font-weight: 700;
+}
+.cart-page .btn-checkout:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 30px rgba(46,204,113,.3);
+}
+
+.cart-page .btn-clear {
+  color: var(--text-1);
+  border-color: rgba(255,255,255,.2);
+}
+
+/* Row separators on dark bg */
+.cart-page .table tr {
+  border-color: var(--surf) !important;
+}
+
+/* -------- Alerts / Empty states -------- */
+.alert {
+  background: linear-gradient(180deg, rgba(14,20,40,.72), rgba(9,14,28,.62));
+  border: 1px solid var(--surf);
+  color: var(--text-1);
+  border-radius: 14px;
+}
+
+/* -------- Footer (optional) -------- */
+.footer {
+  color: var(--muted);
+  border-top: 1px solid var(--surf);
+}
+
+/* -------- Utilities -------- */
+.text-muted-neo { color: var(--muted) !important; }
+.text-sec       { color: var(--text-3) !important; }
+.text-strong    { color: var(--text-2) !important; }
+
+.bg-surface     { background: linear-gradient(180deg, rgba(14,20,40,.72), rgba(9,14,28,.62)); border: 1px solid var(--surf); border-radius: 16px; }
+
+.hr-neo         { border-color: var(--surf); opacity: .6; }
+
+/* Optional subtle glow ring for focusable containers */
+.ring-neo { box-shadow: 0 0 0 4px var(--ring); }
+
+/* -------- Images (defensive) -------- */
+img { display:block; max-width:100%; height:auto; }
+.card-img-top[src=""], .card-img-top:not([src]) { background:#0a0e1a; }
+
+/* -------- Hero Section (welcome page) -------- */
+.hero {
+  background: radial-gradient(900px 600px at 20% 10%, rgba(99,167,255,.06), transparent 60%),
+              radial-gradient(900px 600px at 80% 5%, rgba(163,135,255,.06), transparent 55%);
+  border-bottom: 1px solid var(--surf);
+}
+.hero h1 { color: var(--text-0); }
+.hero p  { color: var(--text-3); }
+/* ===== Cart text visibility (bright) ===== */
+:root{
+  --cart-head:   #cfe0ff;   /* table headers */
+  --cart-text:   #e9efff;   /* normal cell text */
+  --cart-strong: #ffffff;   /* product names / totals */
+  --cart-faint:  rgba(200,215,255,.14); /* row borders */
+}
+
+.cart-page .table thead th{
+  color: var(--cart-head) !important;
+  border-color: var(--cart-faint) !important;
+}
+
+.cart-page .table tbody td{
+  color: var(--cart-text) !important;
+  border-color: var(--cart-faint) !important;
+}
+
+/* Product name */
+.cart-page .product-name,
+.cart-page .product-name a{
+  color: var(--cart-strong) !important;
+  font-weight: 600;
+}
+
+/* Unit price and line totals */
+.cart-page .line-price{ color: #dbe8ff !important; font-weight: 600; }
+.cart-page .line-total{ color: var(--cart-strong) !important; font-weight: 700; }
+
+/* Grand total */
+.cart-page .grand-total{ color: var(--cart-strong) !important; font-weight: 800; }
+
+/* Inputs / buttons still readable */
+.cart-page input[type="number"]{
+  color:#fff !important; background:#0f172a !important;
+  border-color: rgba(185,204,255,.45) !important;
+}
+.cart-page .btn-update{
+  color:#f4f8ff !important; border-color: rgba(185,204,255,.35) !important;
+}
+.cart-page .btn-update:hover{
+  background: rgba(125,211,252,.15); color:#ffff !important; border-color:#dbe7ff !important;
+}
+/* ===== Cart item text visibility (brighter) ===== */
+:root{
+  --cart-head:   #dbe0ff;   /* Table headers (brighter) */
+  --cart-text:   #f3f8ff;   /* Normal cell text */
+  --cart-strong: #fff;      /* Product names / totals (white) */
+  --cart-faint:  rgba(200,215,255,.15); /* Row borders (soft) */
+}
+
+.cart-page .table thead th {
+  color: var(--cart-head) !important; 
+  border-color: var(--cart-faint) !important;
+}
+
+.cart-page .table tbody td {
+  color: var(--cart-text) !important;
+  border-color: var(--cart-faint) !important;
+}
+
+/* Product name in the cart (bolder and brighter) */
+.cart-page .product-name,
+.cart-page .product-name a {
+  color: var(--cart-strong) !important;
+  font-weight: 600;
+}
+
+/* Price and total amounts */
+.cart-page .line-price {
+  color: #dbe8ff !important;  /* Soft price color */
+  font-weight: 600;
+}
+.cart-page .line-total {
+  color: var(--cart-strong) !important;
+  font-weight: 700;
+}
+
+/* Grand total (highlight) */
+.cart-page .grand-total {
+  color: var(--cart-strong) !important;
+  font-weight: 800;
+}
+
+/* Update quantity and buttons */
+.cart-page input[type="number"] {
+  color: #fff !important; 
+  background: #0f172a !important;
+  border-color: rgba(185,204,255,.45) !important;
+}
+
+.cart-page .btn-update {
+  color: #f4f8ff !important;
+  border-color: rgba(185,204,255,.35) !important;
+}
+
+.cart-page .btn-update:hover {
+  background: rgba(125,211,252,.15); 
+  color: #fff !important; 
+  border-color: #dbe7ff !important;
+}
+
+/* Remove button color (red) */
+.cart-page .btn-remove {
+  color: #ffcccc !important;
+  border-color: rgba(255,99,71,.5) !important;
+}
+
+.cart-page .btn-remove:hover {
+  background: rgba(255,99,71,.15) !important;
+  color: #fff !important;
+}
+
+/* Proceed to Checkout button */
+.cart-page .btn-proceed {
+  background: #32CD32 !important;  /* Green */
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.cart-page .btn-proceed:hover {
+  background: #228B22 !important; /* Darker Green */
+}
+.product-img{
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: .75rem;
+  border-top-right-radius: .75rem;
+  background: rgba(255,255,255,.02);
+}
+/* Cart panel: dark glass instead of white box */
+.cart-panel {
+    background: radial-gradient(circle at top left, #171d3a, #070a1b 60%);
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    color: #f7f8ff;
+    overflow: hidden;
+}
+
+/* Make the table match the dark look */
+.cart-panel .table {
+    margin-bottom: 0;
+    color: #f7f8ff;
+}
+
+.cart-panel .table th,
+.cart-panel .table td {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Softer header text */
+.cart-panel .table thead th {
+    color: #a4a8c4;
+    font-weight: 500;
+}
+
+/* Action links visible on dark background */
+.cart-panel a {
+    color: #ff6b81;
+}
+
+.cart-panel a:hover {
+    color: #ff8fa0;
+}
+/* Dark Glass Panel for Cart */
+.cart-panel {
+    background: rgba(10, 15, 35, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    color: #f7f8ff;
+    padding: 1.5rem;
+    transition: background 0.3s ease;
+}
+
+/* Override Bootstrap table background */
+.cart-panel .table {
+    background: transparent !important;
+    color: #e9ebff !important;
+    border-collapse: collapse;
+}
+
+.cart-panel .table thead th {
+    background: transparent !important;
+    color: #a4a8c4;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cart-panel .table tbody td {
+    background: transparent !important;
+    color: #e9ebff !important;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Row hover effect for better readability */
+.cart-panel .table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Highlight total row */
+.cart-panel .table tfoot th {
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Button adjustments for dark mode */
+.cart-panel .btn-outline-secondary {
+    color: #e0e0e0;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cart-panel .btn-outline-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.cart-panel .btn-outline-danger {
+    color: #ff6b81;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.cart-panel .btn-outline-danger:hover {
+    background-color: rgba(255, 80, 100, 0.2);
+    color: #ffb3bd;
+}
+/* === CART PANEL DARK THEME === */
+.cart-panel {
+    background: rgba(10, 15, 35, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+    color: #f7f8ff;
+    padding: 1.5rem;
+}
+
+/* Kill Bootstrap’s white background */
+.cart-panel .table {
+    background: transparent !important;
+    color: #e9ebff !important;
+}
+
+.cart-panel .table thead th,
+.cart-panel .table tbody td,
+.cart-panel .table tfoot th {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Header styling */
+.cart-panel .table thead th {
+    color: #a4a8c4;
+    font-weight: 500;
+}
+
+/* Hover row */
+.cart-panel .table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Grand total row */
+.cart-panel .table tfoot th {
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
+}
+
+/* Buttons on dark background */
+.cart-panel .btn-outline-secondary {
+    color: #e0e0e0;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cart-panel .btn-outline-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.cart-panel .btn-outline-danger {
+    color: #ff6b81;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.cart-panel .btn-outline-danger:hover {
+    background-color: rgba(255, 80, 100, 0.2);
+    color: #ffb3bd;
+}
+.cart-panel {
+    background: rgba(10, 15, 35, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+    color: #f7f8ff;
+    padding: 1.5rem;
+}
+
+.cart-panel .table {
+    background: transparent !important;
+    color: #e9ebff !important;
+}
+
+.cart-panel .table thead th,
+.cart-panel .table tbody td,
+.cart-panel .table tfoot th {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+/* FINAL override to kill the white block on the cart page */
+.cart-page .table {
+  background-color: transparent !important;
+}
+
+.cart-page .table thead th,
+.cart-page .table tbody td,
+.cart-page .table tfoot th {
+  background-color: transparent !important;
+}
+.hero-welcome {
+  font-size: 1.5rem;
+  letter-spacing: .19em;
+  font-weight: 900;
+  color: #e9efff;
+}
+/* ============================
+   G.R Mart category strip
+   ============================ */
+
+.nav-strip {
+  background: #111822; /* dark bar, like Amazon */
+  border-top: 1px solid rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-size: 0.9rem;
+}
+
+.nav-strip .container {
+  padding-top: .45rem;
+  padding-bottom: .45rem;
+}
+
+/* Brand area on the strip */
+.nav-strip-brand {
+  color: #f5f7ff;
+  font-size: .95rem;
+}
+
+.nav-strip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #5bb1ff, #a387ff);
+  box-shadow: 0 0 12px rgba(99,167,255,.7);
+}
+
+/* Links on the strip */
+.nav-strip-link {
+  color: #f1f5ff;
+  text-decoration: none;
+  padding: .2rem .35rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.nav-strip-link:hover {
+  background: rgba(255,255,255,.08);
+  color: #ffffff;
+}
+/* === Make product prices brighter on dark theme === */
+.product-card .price-tag,
+.product-card .text-muted,
+.product-card .text-muted small {
+  color: #f5f7ff !important;   /* bright text */
+  font-weight: 600;
+  opacity: 1 !important;
+}
+.product-card .price-tag {
+  color: #f5f7ff !important;
+  font-weight: 600;
+}
+/* ===== Order history panel (dark, readable) ===== */
+.order-history-panel {
+  background: rgba(10, 15, 35, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+  color: #f7f8ff;
+  padding: 1.5rem;
+}
+
+/* Make table text bright on dark background */
+.order-history-panel .table {
+  background: transparent !important;
+  color: #e9ebff !important;
+}
+
+.order-history-panel .table thead th,
+.order-history-panel .table tbody td {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.order-history-panel .table thead th {
+  color: #dbe0ff;
+  font-weight: 600;
+}
+
+.order-history-panel .table tbody td {
+  color: #f3f8ff;
+}
+
+/* Hover row */
+.order-history-panel .table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+/* === ORDERS PANEL (order history) – dark glass & bright text === */
+.orders-panel {
+  background: rgba(10, 15, 35, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+  color: #e9efff;
+  padding: 1.5rem;
+}
+
+/* Make sure the table doesn’t bring back a white background */
+.orders-panel .table {
+  background: transparent !important;
+  color: #e9efff !important;
+  border-collapse: collapse;
+}
+
+.orders-panel .table thead th,
+.orders-panel .table tbody td,
+.orders-panel .table tfoot th {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Header row */
+.orders-panel .table thead th {
+  color: #cfd8ff;
+  font-weight: 600;
+}
+
+/* Hover rows */
+.orders-panel .table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Buttons inside orders panel */
+.orders-panel .btn-outline-light {
+  color: #e9efff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.orders-panel .btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+/* === ORDERS LIST PANEL (dark glass, no white sheet) === */
+.orders-panel {
+  background: rgba(10, 15, 35, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+  color: #f7f8ff;
+  padding: 1.5rem;
+}
+
+/* Make sure the Bootstrap table doesn’t re-introduce white */
+.orders-panel .table {
+  background: transparent !important;
+  color: #e9ebff !important;
+  border-collapse: collapse;
+}
+
+.orders-panel .table thead th,
+.orders-panel .table tbody td,
+.orders-panel .table tfoot th {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Hover effect */
+.orders-panel .table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Links / buttons inside orders panel */
+.orders-panel a {
+  color: #ff6b81;
+}
+.orders-panel a:hover {
+  color: #ff9aaa;
+}
+/* === FINAL FIX: kill any white panel inside My Orders === */
+.orders-panel,
+.orders-panel .card,
+.orders-panel .card-body,
+.orders-panel .table-responsive {
+  background: rgba(10, 15, 35, 0.9) !important;
+  background-color: rgba(10, 15, 35, 0.9) !important;
+  color: #e9efff !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+}
+
+/* make ANY table in orders-panel dark & readable */
+.orders-panel table {
+  background: transparent !important;
+  color: #e9efff !important;
+  border-collapse: collapse;
+}
+
+.orders-panel table thead th,
+.orders-panel table tbody td,
+.orders-panel table tfoot th {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.orders-panel table thead th {
+  color: #dbe0ff !important;
+  font-weight: 600;
+}
+
+.orders-panel table tbody td {
+  color: #f3f8ff !important;
+}
+
+.orders-panel table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}

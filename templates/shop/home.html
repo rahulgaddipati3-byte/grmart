@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Welcome • G.R Mart{% endblock %}
+
+{% block content %}
+<section class="hero py-5">
+  <div class="container py-5">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-7">
+
+        {% if request.user.is_authenticated %}
+          <p class="mb-2 text-sec">Welcome back</p>
+          <h1 class="display-5 fw-bold mb-3">
+            Hi {{ request.user.username }}, ready to shop?
+          </h1>
+          <p class="lead text-muted-neo mb-4">
+            Jump straight into our latest products or review your cart before checkout.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="/products/" class="btn btn-glow px-4 py-2">
+              Browse Products
+            </a>
+            <a href="/cart/" class="btn btn-outline-light px-4 py-2">
+              Go to Cart
+            </a>
+          </div>
+
+        {% else %}
+          <!-- BIGGER Welcome text -->
+          <p class="text-uppercase hero-welcome mb-3">
+            Welcome to G.R Mart
+          </p>
+
+          <h1 class="display-5 fw-bold mb-3">
+            Sign in to start shopping
+          </h1>
+          <p class="lead text-muted-neo mb-4">
+            Create a free account or log in to your existing one to access your cart,
+            orders and personalised offers.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="/accounts/login/" class="btn btn-glow px-4 py-2">
+              Login
+            </a>
+            <a href="/accounts/register/" class="btn btn-outline-light px-4 py-2">
+              Register
+            </a>
+          </div>
+        {% endif %}
+
+      </div>
+
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="surface p-4">
+          <h5 class="mb-3 text-sec">Why shop with G.R Mart?</h5>
+          <ul class="list-unstyled text-muted-neo small mb-0">
+            <li class="mb-2">• Curated tech & essentials at great prices</li>
+            <li class="mb-2">• Secure checkout and order tracking</li>
+            <li class="mb-2">• Your cart and orders saved to your account</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

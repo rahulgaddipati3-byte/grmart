@@ -1,0 +1,25 @@
+﻿{% extends "base.html" %}
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<div class="card mx-auto" style="max-width: 500px;">
+  <div class="card-body">
+    <h3 class="mb-3 text-center">Create Account</h3>
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary w-100" type="submit">Sign Up</button>
+    </form>
+
+    <div class="text-center mt-3">
+      Already have an account? <a href="/accounts/login/">Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

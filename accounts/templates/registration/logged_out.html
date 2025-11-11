@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Logged Out • G.R Mart{% endblock %}
+{% block content %}
+<div class="alert alert-success">You have been logged out successfully.</div>
+<a class="btn btn-primary" href="{% url 'login' %}">Login again</a>
+<a class="btn btn-outline-secondary ms-2" href="{% url 'product_list' %}">Back to Home</a>
+{% endblock %}
