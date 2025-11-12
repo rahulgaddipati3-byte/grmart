@@ -1,16 +1,10 @@
-from django.db import migrations, models
+# store/migrations/0011_add_image_field.py
+from django.db import migrations
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('store', '0010_alter_product_options'),   # this matches your last valid migration
+        ("store", "0010_alter_product_options"),
     ]
 
-    operations = [
-        migrations.AddField(
-            model_name='product',
-            name='image',
-            field=models.ImageField(upload_to='products/', blank=True, null=True),
-        ),
-    ]
-
+    # No operations: the image column already exists from 0002
+    operations = []
