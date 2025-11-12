@@ -43,7 +43,7 @@
 <div class="products-wrap">
   <div class="topbar">
     <h1>Products</h1>
-    <form class="q" action="{% url 'product_list' %}" method="get">
+    <form class="q" action="{% url 'store:product_list' %}" method="get">
       <input name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search products…">
     </form>
   </div>
