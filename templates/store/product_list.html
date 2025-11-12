@@ -1,84 +1,124 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
-{% block title %}Products • G.R Mart{% endblock %}
+{% block title %}Products{% endblock %}
 
 {% block content %}
-<h2 class="mb-3">Products</h2>
+<div class="container mx-auto px-4 py-6">
 
-{% if products %}
-  <div class="row g-3">
+  <!-- Header + Search -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <h1 class="text-2xl font-semibold text-white/90">Products</h1>
 
-    {% for p in products %}
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <!-- use product-card so neon.css styles apply -->
-        <div class="card product-card h-100 border-0 shadow-sm">
+    <form action="{% url 'product_list' %}" method="get" class="w-full md:w-1/2">
+      <label class="sr-only" for="q">Search products</label>
+      <input
+        id="q"
+        name="q"
+        value="{{ query|default_if_none:'' }}"
+        type="text"
+        placeholder="Search products…"
+        class="w-full rounded-lg bg-white/10 border border-white/15 text-white placeholder-white/40 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      />
+    </form>
+  </div>
 
-          {# Image: prefer DB URL (image_url) → uploaded file (image) → placeholder #}
-          {% if p.image_url %}
-            <img
-              src="{{ p.image_url }}"
-              alt="{{ p.name }}"
-              class="card-img-top product-img"
-              loading="lazy"
-              decoding="async"
-              onerror="this.onerror=null;this.src='{% static 'img/placeholder-product.png' %}';"
-            >
-          {% elif p.image %}
-            <img
-              src="{{ p.image.url }}"
-              alt="{{ p.name }}"
-              class="card-img-top product-img"
-              loading="lazy"
-              decoding="async"
-              onerror="this.onerror=null;this.src='{% static 'img/placeholder-product.png' %}';"
-            >
-          {% else %}
-            <img
-              src="{% static 'img/placeholder-product.png' %}"
-              alt="{{ p.name }}"
-              class="card-img-top product-img"
-              loading="lazy"
-              decoding="async"
-            >
-          {% endif %}
+  <!-- Result summary (only when searching) -->
+  {% if searched %}
+    <p class="mb-4 text-sm text-white/70">
+      Showing <strong>{{ result_count }}</strong> result{{ result_count|pluralize }} for
+      <strong>“{{ query }}”</strong>.
+    </p>
+  {% endif %}
 
-          <div class="card-body d-flex flex-column">
-            <h6 class="card-title mb-1">{{ p.name }}</h6>
-
-            <!-- brighter price text -->
-            <div class="price-tag mb-2">
-              ₹ {{ p.price }}
-            </div>
-
-            <div class="mt-auto">
-              <form method="post" action="{% url 'cart:add_to_cart' p.id %}">
-                {% csrf_token %}
-                <div class="d-flex gap-2">
-                  <input
-                    type="number"
-                    name="qty"
-                    value="1"
-                    min="1"
-                    class="form-control form-control-sm"
-                    style="max-width:90px"
-                  >
-                  <button type="submit" class="btn btn-gradient w-100">
-                    Add to Cart
-                  </button>
-                </div>
-              </form>
-            </div>
+  {% if products %}
+    <!-- Product grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for p in products %}
+        <div class="rounded-xl bg-white/5 border border-white/10 overflow-hidden shadow">
+          <div class="aspect-[4/3] bg-black/20 overflow-hidden">
+            {% if p.image_src %}
+              <img src="{{ p.image_src }}" alt="{{ p.name }}" class="w-full h-full object-cover">
+            {% else %}
+              <div class="w-full h-full flex items-center justify-center text-white/40">
+                No image
+              </div>
+            {% endif %}
           </div>
 
+          <div class="p-4">
+            <h3 class="text-white font-medium truncate" title="{{ p.name }}">{{ p.name }}</h3>
+            <p class="mt-1 text-indigo-300 font-semibold">₹ {{ p.price|floatformat:2|intcomma }}</p>
+
+            <div class="mt-3 flex items-center justify-between">
+              {% if p.stock|default:0 > 0 %}
+                <span class="text-sm text-emerald-300">In stock: {{ p.stock }}</span>
+                <form action="{% url 'cart:add' p.id %}" method="post" class="m-0">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <button
+                    type="submit"
+                    class="rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm px-3 py-2">
+                    Add to Cart
+                  </button>
+                </form>
+              {% else %}
+                <span class="text-sm text-rose-300 font-medium">Out of stock</span>
+              {% endif %}
+            </div>
+          </div>
         </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <!-- Empty states -->
+    {% if searched %}
+      <!-- Searching but nothing matched: OUT OF STOCK message -->
+      <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+        <p class="text-lg text-white/90 font-medium">
+          “{{ query }}” is <span class="text-rose-300">out of stock</span> right now.
+        </p>
+        <p class="mt-2 text-white/60">
+          Try a different keyword or check back later.
+        </p>
       </div>
+    {% else %}
+      <!-- No products in DB at all -->
+      <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+        <p class="text-white/80">No products yet.
+          <a class="text-indigo-300 underline" href="/admin/">Add some in the admin</a>.
+        </p>
+      </div>
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %}
+{% if page_obj and paginator.num_pages > 1 %}
+  <nav class="mt-10 flex items-center justify-center gap-2">
+    {% if page_obj.has_previous %}
+      <a class="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
+         href="?{% if base_qs %}{{ base_qs }}&{% endif %}page=1">First</a>
+      <a class="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
+         href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.previous_page_number }}">Prev</a>
+    {% endif %}
+
+    {% for num in paginator.page_range %}
+      {% if num == page_obj.number %}
+        <span class="px-3 py-2 rounded bg-indigo-600 text-white font-semibold">{{ num }}</span>
+      {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+        <a class="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
+           href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ num }}">{{ num }}</a>
+      {% endif %}
     {% endfor %}
 
-  </div>
-{% else %}
-  <div class="alert alert-secondary">
-    No products yet. Add some in the <a href="/admin/">admin</a>.
-  </div>
+    {% if page_obj.has_next %}
+      <a class="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
+         href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+      <a class="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
+         href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ paginator.num_pages }}">Last</a>
+    {% endif %}
+  </nav>
 {% endif %}
-{% endblock %}

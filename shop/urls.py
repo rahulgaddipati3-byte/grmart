@@ -14,7 +14,7 @@ urlpatterns = [
     path("orders/", include("orders.urls")),
     path("accounts/", include("accounts.urls")),
     path("accounts/register/", RedirectView.as_view(pattern_name="signup", permanent=False)),
-
+    path("products/", include("store.urls")),
 ]
 
 # Serve media (for product images) during development
