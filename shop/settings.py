@@ -4,36 +4,33 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ============================
-# Core
-# ============================
+# =========================================================
+# Core / Environment
+# =========================================================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key-change-me")
-
-# Default DEBUG True locally; set DEBUG=False in Render env
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-# Detect Render
 ON_RENDER = os.getenv("RENDER") == "1"
-RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME")  # Render sets this for your service
+RENDER_HOST = os.getenv("RENDER_EXTERNAL_HOSTNAME")  # e.g. "grmart.onrender.com"
 
 if ON_RENDER:
-    # Prefer Render-provided hostname; fall back to your known domain
+    # Allow the Render hostname (and your fixed domain if you add one)
     ALLOWED_HOSTS = [h for h in [RENDER_HOST, "grmart.onrender.com"] if h]
-    # Include exact origin(s) and wildcard for subdomains
-    CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS] + ["https://*.onrender.com"]
+    # CSRF must be exact origins (no wildcards)
+    CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS]
 else:
     ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
     CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1", "http://localhost"]
 
-# When behind Render’s proxy & in HTTPS, make Django aware
+# Make Django aware of HTTPS when behind Render’s proxy
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Harden security automatically when DEBUG=False
+# Harden security when DEBUG=False
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 60 * 60 * 24  # 1 day (raise later if you like)
+    SECURE_HSTS_SECONDS = 60 * 60 * 24  # raise after verifying HTTPS works end-to-end
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 else:
@@ -41,9 +38,9 @@ else:
     CSRF_COOKIE_SECURE = False
     SECURE_SSL_REDIRECT = False
 
-# ============================
+# =========================================================
 # Apps
-# ============================
+# =========================================================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -89,19 +86,20 @@ TEMPLATES = [
     },
 ]
 
-# ============================
+# =========================================================
 # Database
-# ============================
+# =========================================================
 if ON_RENDER:
-    # Simple & persistent: SQLite file in the Render disk
+    # Use SQLite on Render, stored under a dedicated folder we create at startup.
+    DATA_DIR = BASE_DIR / "data"
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": "/var/data/db.sqlite3", 
+            "NAME": DATA_DIR / "db.sqlite3",
         }
     }
 else:
-    # Local MySQL (your Workbench setup)
+    # Local MySQL (Workbench)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
@@ -118,16 +116,12 @@ else:
         }
     }
 
-# ============================
+# =========================================================
 # Static & Media
-# ============================
+# =========================================================
 STATIC_URL = "/static/"
-
-# Your repo static (e.g., css, images used by templates)
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# Where collectstatic writes for production
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]     # your repo assets (css/js/images used by templates)
+STATIC_ROOT = BASE_DIR / "staticfiles"       # where collectstatic writes for production
 
 STORAGES = {
     "default": {
@@ -138,15 +132,15 @@ STORAGES = {
     },
 }
 
-# Let Whitenoise resolve files from STATICFILES_DIRS directly
+# Let WhiteNoise also check STATICFILES_DIRS (so /static/css/neon.css works)
 WHITENOISE_USE_FINDERS = True
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# ============================
-# Locale / Time
-# ============================
+# =========================================================
+# Internationalization / Time
+# =========================================================
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
@@ -154,22 +148,22 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ============================
+# =========================================================
 # Auth redirects
-# ============================
+# =========================================================
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"     # or "/products/"
+LOGIN_REDIRECT_URL = "/"      # or "/products/"
 LOGOUT_REDIRECT_URL = "/"
 
-# ============================
+# =========================================================
 # Email (dev)
-# ============================
+# =========================================================
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@grmart.local"
 
-# ============================
-# Optional: basic logging
-# ============================
+# =========================================================
+# Logging (simple & useful on Render)
+# =========================================================
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
