@@ -1,45 +1,37 @@
 # store/views.py
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
-from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Product
 
+
+def home(request):
+    """Send '/' traffic to the products list."""
+    return redirect("product_list")
+
+
 def product_list(request):
-    q = (request.GET.get("q") or "").strip()
-    searched = bool(q)
+    """
+    List products.
+    - Supports search via ?q=... (multi-term AND search).
+    - Does NOT exclude stock=0; template shows 'Out of stock'.
+    """
+    query = (request.GET.get("q") or "").strip()
+    products = Product.objects.all()
 
-    qs = Product.objects.all().order_by("-created_at")
+    if query:
+        # Allow queries like 'apple iphone' or 'apple+iphone'
+        terms = [t for t in query.replace("+", " ").split() if t]
+        for t in terms:
+            products = products.filter(Q(name__icontains=t))
 
-    if searched:
-        qs = qs.filter(
-            Q(name__icontains=q) |
-            Q(image_url__icontains=q)
-        )
+    products = products.order_by("-created_at", "name")
+    ctx = {"products": products, "query": query}
+    return render(request, "products/product_list.html", ctx)
 
-    # ---- Pagination ----
-    page_size = 12                          # tweak how many cards per page
-    paginator = Paginator(qs, page_size)
-    page = request.GET.get("page", 1)
 
-    try:
-        page_obj = paginator.page(page)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
-
-    # Preserve current querystring (except page) in pagination links
-    params = request.GET.copy()
-    params.pop("page", None)
-    base_qs = params.urlencode()  # e.g. "q=iphone"
-
-    context = {
-        "products": page_obj.object_list,   # current page items
-        "page_obj": page_obj,               # for controls
-        "paginator": paginator,
-        "query": q,
-        "searched": searched,
-        "result_count": qs.count(),
-        "base_qs": base_qs,
-    }
-    return render(request, "products/product_list.html", context)
+def product_detail(request, pk):
+    """
+    Optional detail view (safe to keep even if not used by URLs).
+    """
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, "products/product_detail.html", {"product": product})
