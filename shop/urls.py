@@ -6,15 +6,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # 👉 send the empty path to the products list
-    path("", RedirectView.as_view(url="/products/", permanent=False), name="home"),
-
-    # apps
-    path("products/", include("store.urls")),      # store.urls has name="product_list"
+    path("", RedirectView.as_view(pattern_name="store:product_list", permanent=False), name="home"),
+    path("admin/", admin.site.urls),
+    path("products/", include(("store.urls", "store"), namespace="store")),
     path("cart/", include(("cart.urls", "cart"), namespace="cart")),
     path("orders/", include(("orders.urls", "orders"), namespace="orders")),
     path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
-    path("admin/", admin.site.urls),
 ]
 
 if settings.DEBUG:
