@@ -1,116 +1,44 @@
 ﻿{% load static %}
+
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>G.R Mart</title>
-
+    <title>{% block title %}G.R Mart{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="{% static 'css/neon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body class="bg-slate-900 text-slate-100">
+<body>
+<header class="top-bar">
+    <div class="logo">
+        <a href="{% url 'store:product_list' %}">G.R Mart</a>
+    </div>
 
-<header class="top-nav">
-    <style>
-        body{
-            margin:0;
-            font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-            background:#020617;
-            color:#e2e8f0;
-        }
-        a{color:inherit;text-decoration:none}
-        .top-nav{
-            position:sticky;top:0;z-index:40;
-            background:radial-gradient(circle at 0 0,#1d4ed8 0,#020617 45%,#020617 100%);
-            border-bottom:1px solid rgba(15,23,42,.9);
-            box-shadow:0 10px 30px rgba(0,0,0,.55);
-        }
-        .nav-inner{
-            max-width:1200px;margin:0 auto;
-            display:flex;align-items:center;gap:16px;
-            padding:10px 18px;
-        }
-        .brand{
-            font-weight:700;font-size:1.2rem;
-            display:flex;align-items:center;gap:6px;
-        }
-        .brand-dot{
-            width:10px;height:10px;border-radius:999px;
-            background:#22c55e;box-shadow:0 0 12px #22c55e;
-        }
-        .nav-links{
-            display:flex;gap:14px;font-size:.95rem;margin-left:24px;
-        }
-        .nav-links a{opacity:.8}
-        .nav-links a:hover{opacity:1}
-        .search-box{
-            margin-left:auto;position:relative;flex:1;max-width:320px;
-        }
-        .search-box input{
-            width:100%;padding:8px 12px;
-            border-radius:999px;border:1px solid rgba(148,163,184,.5);
-            background:#020617;color:#e2e8f0;
-        }
-        .right-links{
-            display:flex;gap:14px;align-items:center;margin-left:18px;font-size:.9rem;
-        }
-        .right-links a{opacity:.9}
-        .right-links a:hover{opacity:1}
-        .cart-pill{
-            padding:6px 12px;border-radius:999px;
-            background:rgba(148,163,184,.2);
-            border:1px solid rgba(148,163,184,.35);
-            display:flex;align-items:center;gap:6px;
-        }
-        .cart-count{
-            min-width:18px;height:18px;border-radius:999px;
-            background:#f97316;font-size:.7rem;
-            display:inline-flex;align-items:center;justify-content:center;
-            color:#020617;font-weight:700;
-        }
-        main{max-width:1200px;margin:0 auto;padding:16px}
-        footer{
-            margin-top:40px;padding:16px;
-            border-top:1px solid rgba(15,23,42,.9);
-            font-size:.8rem;color:#64748b;text-align:center;
-        }
-    </style>
+    <nav class="main-nav">
+        <a href="{% url 'store:product_list' %}">Products</a>
+        <a href="{% url 'store:product_list' %}?tag=deals">Today's Deals</a>
+    </nav>
 
-    <div class="nav-inner">
-        <!-- Brand -->
-        <a href="{% url 'store:product_list' %}" class="brand">
-            <span class="brand-dot"></span>
-            <span>G.R Mart</span>
+    <form class="search-box" action="{% url 'store:product_list' %}" method="get">
+        <input
+            type="text"
+            name="q"
+            value="{{ request.GET.q|default:'' }}"
+            placeholder="Search products..."
+        >
+    </form>
+
+    <div class="right-links">
+        <!-- Cart link – IMPORTANT: namespaced as cart:view -->
+        <a href="{% url 'cart:view' %}" class="cart-pill">
+            <span>Cart</span>
+            <span class="cart-count">{{ cart_items_count|default:0 }}</span>
         </a>
 
-        <!-- Nav links -->
-        <nav class="nav-links">
-            <a href="{% url 'store:product_list' %}">Products</a>
-            <a href="{% url 'store:product_list' %}?tag=deals">Today&apos;s Deals</a>
-        </nav>
-
-        <!-- Search -->
-        <form class="search-box" action="{% url 'store:product_list' %}" method="get">
-            <input type="text"
-                   name="q"
-                   value="{{ request.GET.q|default:'' }}"
-                   placeholder="Search products...">
-        </form>
-
-        <!-- Right side: cart + auth -->
-        <div class="right-links">
-            <!-- Cart link (uses cart:view URL name) -->
-            <a href="{% url 'cart:view' %}" class="cart-pill">
-                <span>Cart</span>
-                <span class="cart-count">{{ cart_items_count|default:0 }}</span>
-            </a>
-
-            <!-- Auth links (simple paths, no reverse errors) -->
-            <a href="/accounts/login/">Login</a>
-            <a href="/accounts/signup/">Register</a>
-        </div>
+        <!-- Auth links – these are simple URLs, no extra reverse names -->
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/signup/">Register</a>
     </div>
 </header>
 
@@ -119,8 +47,7 @@
 </main>
 
 <footer>
-    © {% now "Y" %} G.R Mart. All rights reserved.
+    <p>&copy; 2025 G.R Mart. All rights reserved.</p>
 </footer>
-
 </body>
 </html>

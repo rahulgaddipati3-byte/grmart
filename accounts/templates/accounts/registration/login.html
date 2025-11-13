@@ -1,29 +1,33 @@
 {% extends "base.html" %}
 
+{% block title %}Login · G.R Mart{% endblock %}
+
 {% block content %}
-<div class="auth-wrap" style="max-width:420px;margin:40px auto;padding:24px;border-radius:16px;background:#020617;border:1px solid rgba(148,163,184,.25);box-shadow:0 18px 40px rgba(15,23,42,.8);">
-    <h1 style="margin:0 0 16px;font-size:1.4rem;">Login</h1>
+<div class="auth-page">
+    <h1>Login</h1>
 
     <form method="post" novalidate>
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
 
-        <button type="submit"
-                style="margin-top:8px;width:100%;padding:10px 14px;border-radius:999px;border:0;
-                       background:#2563eb;color:#fff;font-weight:600;cursor:pointer;">
-            Login
-        </button>
+        <div class="form-row">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div class="form-row">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+
+        <button type="submit">Login</button>
     </form>
 
-    <p style="margin-top:16px;font-size:.9rem;color:#94a3b8;">
-        Don&apos;t have an account yet?
-        <a href="{% url 'accounts:signup' %}" style="color:#60a5fa;">Register</a>
-    </p>
-
-    <p style="margin-top:8px;font-size:.85rem;">
-        <a href="{% url 'accounts:password_reset' %}" style="color:#93c5fd;">
-            Forgot your password?
-        </a>
+    <p class="auth-alt">
+        Don't have an account?
+        <a href="/accounts/signup/">Sign up</a>
     </p>
 </div>
 {% endblock %}
