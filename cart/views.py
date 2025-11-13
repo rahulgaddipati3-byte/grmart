@@ -1,105 +1,80 @@
-from decimal import Decimal
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+# cart/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.views.decorators.http import require_POST
 from store.models import Product
 
 CART_SESSION_KEY = "cart"
 
-
-def _get_cart(session) -> dict:
-    """Return a dict cart from session. If corrupted/mis-typed, reset to {}."""
-    cart = session.get(CART_SESSION_KEY)
+def _get_cart(request):
+    cart = request.session.get(CART_SESSION_KEY, {})
     if not isinstance(cart, dict):
         cart = {}
-        session[CART_SESSION_KEY] = cart
     return cart
 
-
-def _save_cart(session, cart: dict) -> None:
-    session[CART_SESSION_KEY] = cart
-    session.modified = True
-
-
-@login_required
-def add_to_cart(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-
-    cart = _get_cart(request.session)
-
-    # qty from form, default 1
-    try:
-        qty = int(request.POST.get("qty", 1))
-    except (TypeError, ValueError):
-        qty = 1
-    if qty < 1:
-        qty = 1
-
-    pid = str(product.id)
-    # item shape in cart
-    item = cart.get(pid, {
-        "name": product.name,
-        "price": str(product.price),  # keep price as string in session
-        "qty": 0,
-    })
-    item["qty"] = int(item.get("qty", 0)) + qty
-    cart[pid] = item
-    _save_cart(request.session, cart)
-
-    return redirect("cart:cart_view")
-
-
-@login_required
-def cart_view(request):
-    cart = _get_cart(request.session)
-    items = []
-    grand_total = Decimal("0")
-
-    for pid, item in cart.items():
-        price = Decimal(item["price"])
-        qty = int(item["qty"])
-        subtotal = price * qty
-        grand_total += subtotal
-        items.append({
-            "id": int(pid),
-            "name": item["name"],
-            "price": price,
-            "qty": qty,
-            "subtotal": subtotal,
-        })
-
-    return render(request, "cart/cart_view.html", {
-        "items": items,
-        "grand_total": grand_total,
-    })
-
-
-@login_required
-def update_qty(request, pk):
-    cart = _get_cart(request.session)
-    pid = str(pk)
-    if request.method == "POST" and pid in cart:
-        try:
-            qty = int(request.POST.get("qty", 1))
-        except (TypeError, ValueError):
-            qty = 1
-        if qty <= 0:
-            cart.pop(pid, None)
-        else:
-            cart[pid]["qty"] = qty
-        _save_cart(request.session, cart)
-    return redirect("cart:cart_view")
-
-
-@login_required
-def remove_item(request, pk):
-    cart = _get_cart(request.session)
-    cart.pop(str(pk), None)
-    _save_cart(request.session, cart)
-    return redirect("cart:cart_view")
-
-
-@login_required
-def clear_cart(request):
-    request.session.pop(CART_SESSION_KEY, None)
+def _save_cart(request, cart):
+    request.session[CART_SESSION_KEY] = cart
     request.session.modified = True
-    return redirect("cart:cart_view")
+
+def cart_detail(request):
+    cart = _get_cart(request)
+    items, subtotal = [], 0
+    for pid_str, qty in cart.items():
+        try:
+            product = Product.objects.get(pk=int(pid_str))
+            qty = int(qty)
+            line_total = float(product.price) * qty
+            subtotal += line_total
+            items.append({
+                "product": product,
+                "qty": qty,
+                "line_total": line_total,
+            })
+        except Product.DoesNotExist:
+            continue
+    return render(request, "cart/detail.html", {"items": items, "subtotal": subtotal})
+
+@require_POST
+def add_to_cart(request):
+    product_id = request.POST.get("product_id")
+    qty = request.POST.get("qty", "1")
+    product = get_object_or_404(Product, pk=product_id)
+
+    try:
+        qty = max(1, int(qty))
+    except ValueError:
+        qty = 1
+
+    if product.stock is not None and product.stock <= 0:
+        messages.warning(request, f"{product.name} is out of stock.")
+        return _back_to_products(request)
+
+    cart = _get_cart(request)
+    current = int(cart.get(str(product.id), 0))
+    new_qty = current + qty
+
+    if product.stock is not None and new_qty > product.stock:
+        new_qty = product.stock
+        messages.info(request, f"Limited stock. Set quantity of {product.name} to {new_qty}.")
+
+    cart[str(product.id)] = new_qty
+    _save_cart(request, cart)
+    messages.success(request, f"Added {qty} × {product.name} to cart.")
+    return _back_to_products(request)
+
+def remove_item(request, product_id: int):
+    cart = _get_cart(request)
+    cart.pop(str(product_id), None)
+    _save_cart(request, cart)
+    messages.info(request, "Removed item from cart.")
+    return redirect("cart:detail")
+
+def clear_cart(request):
+    _save_cart(request, {})
+    messages.info(request, "Cart cleared.")
+    return redirect("cart:detail")
+
+def _back_to_products(request):
+    # send user back to product list retaining filters/search if present
+    ref = request.META.get("HTTP_REFERER")
+    return redirect(ref or "store:product_list")
