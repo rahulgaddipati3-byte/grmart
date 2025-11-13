@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-  /* Layout */
   .products-wrap{max-width:1200px;margin:0 auto;padding:12px 16px 40px}
   .topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .topbar h1{font-size:1.4rem;margin:0;color:#e2e8f0}
@@ -14,8 +13,6 @@
     border-radius:10px;color:#e2e8f0;padding:10px 12px
   }
   .empty{margin-top:16px;color:#94a3b8}
-
-  /* Grid & cards */
   .products-grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
@@ -32,8 +29,6 @@
   .card h3{margin:0 0 6px;font-size:1.05rem;color:#e2e8f0;line-height:1.35}
   .card .price{margin:0;color:#cbd5e1;font-weight:700}
   .card .footer{padding:12px 16px 16px;margin-top:auto}
-
-  /* States & badges */
   .badge{
     display:inline-block;padding:2px 8px;margin-left:8px;
     border-radius:999px;font-size:12px;background:#ef4444;color:#fff
@@ -41,8 +36,6 @@
   .soldout img{filter:grayscale(.85);opacity:.45}
   .soldout h3,.soldout .price{color:#94a3b8}
   .soldout .badge{background:#475569}
-
-  /* Cart form */
   .cart-form{display:flex;gap:10px;align-items:center}
   .qty-input{
     width:64px;padding:6px 8px;border-radius:10px;
@@ -71,11 +64,7 @@
     <div class="products-grid">
       {% for p in products %}
         <div class="card {% if p.stock|default:0 <= 0 %}soldout{% endif %}">
-          {# Optional link to product detail if you have store:product_detail configured #}
-          {# <a href="{% url 'store:product_detail' p.id %}"> #}
           <img src="{{ p.image_src }}" alt="{{ p.name }}" loading="lazy">
-          {# </a> #}
-
           <div class="body">
             <h3>
               {{ p.name }}

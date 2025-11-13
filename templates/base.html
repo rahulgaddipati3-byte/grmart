@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {# Main CSS file #}
+    <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'css/neon.css' %}">
 </head>
 <body>
@@ -40,9 +40,7 @@
             width:10px;height:10px;border-radius:999px;
             background:#22c55e;box-shadow:0 0 12px #22c55e;
         }
-        .nav-links{
-            display:flex;gap:14px;font-size:.95rem;margin-left:24px;
-        }
+        .nav-links{display:flex;gap:14px;font-size:.95rem;margin-left:24px}
         .nav-links a{opacity:.8}
         .nav-links a:hover{opacity:1}
         .search-box{
@@ -54,8 +52,8 @@
             background:#020617;color:#e2e8f0;
         }
         .right-links{
-            display:flex;gap:14px;align-items:center;
-            margin-left:18px;font-size:.9rem;
+            display:flex;gap:14px;align-items:center;margin-left:18px;
+            font-size:.9rem;
         }
         .right-links a{opacity:.9}
         .right-links a:hover{opacity:1}
@@ -97,15 +95,15 @@
         </form>
 
         <div class="right-links">
-            {# CART LINK — correct URL name + count from context processor #}
-            <a href="{% url 'cart:detail' %}" class="cart-pill">
+            <!-- CART LINK — IMPORTANT: use cart:view -->
+            <a href="{% url 'cart:view' %}" class="cart-pill">
                 <span>Cart</span>
-                <span class="cart-count">{{ cart_count|default:0 }}</span>
+                <span class="cart-count">{{ cart_items_count|default:0 }}</span>
             </a>
 
-            {# Auth links — use correct named URLs from accounts/urls.py #}
-            <a href="{% url 'accounts:login' %}">Login</a>
-            <a href="{% url 'accounts:signup' %}">Register</a>
+            <!-- Auth links -->
+            <a href="/accounts/login/">Login</a>
+            <a href="/accounts/signup/">Register</a>
         </div>
     </div>
 </header>
