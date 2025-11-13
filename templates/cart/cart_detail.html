@@ -1,110 +1,42 @@
 {% extends "base.html" %}
-
 {% block content %}
-<style>
-  .cart-wrap{
-    max-width:900px;
-    margin:0 auto;
-    padding:24px 16px 40px;
-  }
-  .cart-title{
-    font-size:2rem;
-    margin-bottom:18px;
-  }
-  table.cart-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-bottom:20px;
-  }
-  table.cart-table th,
-  table.cart-table td{
-    padding:8px 6px;
-    text-align:left;
-    border-bottom:1px solid rgba(148,163,184,.25);
-  }
-  table.cart-table th{
-    font-weight:600;
-    color:#cbd5e1;
-  }
-  table.cart-table td{
-    font-size:.95rem;
-  }
-  .cart-total{
-    font-weight:600;
-    margin:10px 0 20px;
-    font-size:1.05rem;
-  }
-  .cart-actions{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-  }
-  .btn-primary,
-  .btn-ghost{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:9px 18px;
-    border-radius:999px;
-    font-size:.9rem;
-    font-weight:600;
-    text-decoration:none;
-    cursor:pointer;
-  }
-  .btn-primary{
-    background:#2563eb;
-    color:#fff;
-    border:none;
-  }
-  .btn-primary:hover{filter:brightness(1.06);}
-  .btn-ghost{
-    border:1px solid rgba(148,163,184,.6);
-    color:#e2e8f0;
-    background:transparent;
-  }
-  .btn-ghost:hover{
-    background:rgba(148,163,184,.18);
-  }
-</style>
+<h1>Cart</h1>
 
-<div class="cart-wrap">
-  <h1 class="cart-title">Cart</h1>
-
-  {% if cart_items %}
-    <table class="cart-table">
-      <thead>
+{% if cart_items %}
+<table>
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Line total</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in cart_items %}
         <tr>
-          <th>Product</th>
-          <th>Qty</th>
-          <th>Line total</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in cart_items %}
-          <tr>
             <td>{{ item.product.name }}</td>
             <td>{{ item.quantity }}</td>
             <td>₹ {{ item.line_total }}</td>
             <td>
-              <a href="{% url 'cart:remove' item.product.id %}">Remove</a>
+                <a href="{% url 'cart:remove_item' item.product.id %}">Remove</a>
             </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
-    <p class="cart-total">Total: ₹ {{ cart_total }}</p>
+<p><strong>Total:</strong> ₹ {{ cart_total }}</p>
 
-    <div class="cart-actions">
-      {# Proceed to checkout – use plain URL so it never throws NoReverseMatch #}
-      <a href="/orders/checkout/" class="btn-primary">Proceed to checkout</a>
+<p>
+    <a href="{% url 'orders:checkout' %}" class="btn-primary">Proceed to checkout</a>
+</p>
 
-      {# Clear cart using our cart namespace URL #}
-      <a href="{% url 'cart:clear' %}" class="btn-ghost">Clear cart</a>
-    </div>
-  {% else %}
-    <p>Your cart is empty.</p>
-  {% endif %}
-</div>
+<p>
+    <a href="{% url 'cart:clear' %}">Clear Cart</a>
+</p>
+
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
 {% endblock %}
