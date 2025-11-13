@@ -1,7 +1,18 @@
-# cart/context_processors.py
-from .views import _get_cart
+# cart/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from store.models import Product
 
-def cart_count(request):
-    cart = _get_cart(request)
-    total_qty = sum(item["quantity"] for item in cart.values())
-    return {"cart_count": total_qty}
+CART_SESSION_KEY = "cart"
+
+
+def _get_cart(session):
+    """
+    Get the cart dict from the session.
+
+    Shape: {"product_id": quantity, ...}
+    """
+    cart = session.get(CART_SESSION_KEY)
+    if cart is None:
+        cart = {}
+        session[CART_SESSION_KEY] = cart
+    return cart
