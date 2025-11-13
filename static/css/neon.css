@@ -1,7 +1,4 @@
-/* ================================
-   G.R Mart – Dark Neon Theme CSS
-   Single file replacement
-   ================================ */
+
 
 /* -------- CSS Variables -------- */
 :root {
@@ -824,3 +821,31 @@ img { display:block; max-width:100%; height:auto; }
 .orders-panel table tbody tr:hover {
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
+/* ===== Cart form and badge styles ===== */
+.cart-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+.add-btn {
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 0;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+.add-btn:hover {
+  filter: brightness(1.05);
+}
+.badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #334155;
+  color: #94a3b8;
+  font-size: .9rem;
+}
+
