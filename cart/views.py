@@ -1,10 +1,10 @@
 # cart/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.contrib import messages
 from store.models import Product
 
-CART_SESSION_KEY = "cart"
+CART_SESSION_KEY = "cart"  # { product_id: {"qty": int, "price": Decimal, "name": str} }
 
 def _get_cart(request):
     cart = request.session.get(CART_SESSION_KEY, {})
@@ -16,57 +16,43 @@ def _save_cart(request, cart):
     request.session[CART_SESSION_KEY] = cart
     request.session.modified = True
 
-def cart_detail(request):
-    cart = _get_cart(request)
-    items, subtotal = [], 0
-    for pid_str, qty in cart.items():
-        try:
-            product = Product.objects.get(pk=int(pid_str))
-            qty = int(qty)
-            line_total = float(product.price) * qty
-            subtotal += line_total
-            items.append({
-                "product": product,
-                "qty": qty,
-                "line_total": line_total,
-            })
-        except Product.DoesNotExist:
-            continue
-    return render(request, "cart/detail.html", {"items": items, "subtotal": subtotal})
-
 @require_POST
-def add_to_cart(request):
-    product_id = request.POST.get("product_id")
-    qty = request.POST.get("qty", "1")
+def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-
     try:
-        qty = max(1, int(qty))
+        qty = int(request.POST.get("qty", "1"))
     except ValueError:
         qty = 1
+    qty = max(1, qty)
 
-    if product.stock is not None and product.stock <= 0:
-        messages.warning(request, f"{product.name} is out of stock.")
-        return _back_to_products(request)
+    # stock guard (optional if you track stock)
+    if getattr(product, "stock", None) is not None:
+        if qty > product.stock:
+            messages.error(request, "Requested quantity exceeds available stock.")
+            return redirect("store:product_list")
 
     cart = _get_cart(request)
-    current = int(cart.get(str(product.id), 0))
-    new_qty = current + qty
-
-    if product.stock is not None and new_qty > product.stock:
-        new_qty = product.stock
-        messages.info(request, f"Limited stock. Set quantity of {product.name} to {new_qty}.")
-
-    cart[str(product.id)] = new_qty
+    key = str(product.id)
+    if key in cart:
+        cart[key]["qty"] += qty
+    else:
+        cart[key] = {
+            "qty": qty,
+            "price": float(product.price),  # safe for session JSON
+            "name": product.name,
+            "image": product.image_url if getattr(product, "image_url", None) else "",
+        }
     _save_cart(request, cart)
     messages.success(request, f"Added {qty} × {product.name} to cart.")
-    return _back_to_products(request)
+    return redirect("cart:detail")
 
-def remove_item(request, product_id: int):
+def remove_from_cart(request, product_id):
     cart = _get_cart(request)
-    cart.pop(str(product_id), None)
-    _save_cart(request, cart)
-    messages.info(request, "Removed item from cart.")
+    key = str(product_id)
+    if key in cart:
+        del cart[key]
+        _save_cart(request, cart)
+        messages.info(request, "Item removed from cart.")
     return redirect("cart:detail")
 
 def clear_cart(request):
@@ -74,7 +60,20 @@ def clear_cart(request):
     messages.info(request, "Cart cleared.")
     return redirect("cart:detail")
 
-def _back_to_products(request):
-    # send user back to product list retaining filters/search if present
-    ref = request.META.get("HTTP_REFERER")
-    return redirect(ref or "store:product_list")
+def cart_detail(request):
+    cart = _get_cart(request)
+    items = []
+    subtotal = 0.0
+    for pid, row in cart.items():
+        total = row["qty"] * row["price"]
+        subtotal += total
+        items.append({
+            "id": int(pid),
+            "name": row["name"],
+            "qty": row["qty"],
+            "price": row["price"],
+            "total": total,
+            "image": row.get("image") or "",
+        })
+    ctx = {"items": items, "subtotal": subtotal}
+    return render(request, "cart/cart_detail.html", ctx)
