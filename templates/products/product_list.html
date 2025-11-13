@@ -1,11 +1,65 @@
-<form action="{% url 'cart:add_to_cart' product.id %}" method="post" style="margin-top:12px;display:flex;gap:8px;align-items:center;">
-    {% csrf_token %}
-    <input type="number" name="quantity" value="1" min="1"
-           style="width:64px;padding:6px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.6);
-                  background:#020617;color:#e5e7eb;">
-    <button type="submit"
-            style="flex:1;padding:8px 12px;border-radius:999px;border:none;
-                   background:#2563eb;color:#e5e7eb;font-weight:600;cursor:pointer;">
-        Add to Cart
-    </button>
-</form>
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="text-3xl font-semibold mb-4">Products</h1>
+    {% if query %}
+        <p class="text-slate-400 text-sm">
+            Showing results for: <span class="font-medium text-slate-200">"{{ query }}"</span>
+        </p>
+    {% endif %}
+</section>
+
+<div class="products-wrap">
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% elif product.image_url %}
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="no-image">No image</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-body">
+                        <h2 class="product-title">{{ product.name }}</h2>
+                        <p class="product-price">₹ {{ product.price }}</p>
+                    </div>
+
+                    <div class="product-footer">
+                        <form
+                            action="/cart/add/{{ product.id }}/"
+                            method="post"
+                            class="add-cart-form"
+                        >
+                            {% csrf_token %}
+                            <input
+                                type="number"
+                                name="quantity"
+                                value="1"
+                                min="1"
+                                class="qty-input"
+                            >
+                            <button type="submit" class="btn-primary">
+                                Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty">
+            {% if query %}
+                No results for “{{ query }}”.
+            {% else %}
+                No products yet. Add some in the <a href="/admin/">admin</a>.
+            {% endif %}
+        </p>
+    {% endif %}
+</div>
+{% endblock %}
