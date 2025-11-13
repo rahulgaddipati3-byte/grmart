@@ -71,7 +71,11 @@
     <div class="products-grid">
       {% for p in products %}
         <div class="card {% if p.stock|default:0 <= 0 %}soldout{% endif %}">
+          {# Optional link to product detail if you have store:product_detail configured #}
+          {# <a href="{% url 'store:product_detail' p.id %}"> #}
           <img src="{{ p.image_src }}" alt="{{ p.name }}" loading="lazy">
+          {# </a> #}
+
           <div class="body">
             <h3>
               {{ p.name }}
@@ -84,7 +88,6 @@
 
           <div class="footer">
             {% if p.stock|default:0 > 0 %}
-              {# cart:add expects /cart/add/<id>/ #}
               <form class="cart-form" action="{% url 'cart:add' p.id %}" method="post">
                 {% csrf_token %}
                 <input class="qty-input" type="number" name="qty" value="1" min="1" max="{{ p.stock|default:99 }}">
