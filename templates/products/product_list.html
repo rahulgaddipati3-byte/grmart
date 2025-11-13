@@ -23,7 +23,7 @@
                     <h2 class="product-name">{{ product.name }}</h2>
                     <p class="product-price">₹ {{ product.price }}</p>
 
-                    <form action="{% url 'cart:add_to_cart' product.id %}" method="post" class="add-to-cart-form">
+                    <form action="{% url 'cart:add_to_cart' product.id %}" method="post">
                         {% csrf_token %}
                         <input type="number" name="quantity" value="1" min="1">
                         <button type="submit">Add to Cart</button>
@@ -36,3 +36,4 @@
     {% endif %}
 </div>
 {% endblock %}
+

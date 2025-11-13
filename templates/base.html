@@ -1,4 +1,9 @@
-﻿{% load static %}
+﻿<a href="{% url 'cart:detail' %}" class="cart-pill">
+    <span>Cart</span>
+    <span class="cart-count">{{ cart_count|default:0 }}</span>
+</a>
+
+{% load static %}
 
 <!doctype html>
 <html lang="en">
