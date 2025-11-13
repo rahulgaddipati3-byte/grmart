@@ -1,79 +1,48 @@
-# cart/views.py
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.contrib import messages
 from store.models import Product
 
-CART_SESSION_KEY = "cart"  # { product_id: {"qty": int, "price": Decimal, "name": str} }
+CART_SESSION_KEY = "cart"
 
 def _get_cart(request):
     cart = request.session.get(CART_SESSION_KEY, {})
-    if not isinstance(cart, dict):
-        cart = {}
+    # ensure types are ints
+    cart = {int(pid): int(qty) for pid, qty in cart.items()}
+    request.session[CART_SESSION_KEY] = cart
     return cart
 
-def _save_cart(request, cart):
-    request.session[CART_SESSION_KEY] = cart
-    request.session.modified = True
+def cart_view(request):
+    cart = _get_cart(request)
+    items = []
+    total = 0
+    for pid, qty in cart.items():
+        product = get_object_or_404(Product, pk=pid)
+        line_total = float(product.price) * qty
+        total += line_total
+        items.append({"product": product, "qty": qty, "line_total": line_total})
+    ctx = {"items": items, "total": total}
+    return render(request, "cart/cart_detail.html", ctx)
 
 @require_POST
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    try:
-        qty = int(request.POST.get("qty", "1"))
-    except ValueError:
-        qty = 1
-    qty = max(1, qty)
-
-    # stock guard (optional if you track stock)
-    if getattr(product, "stock", None) is not None:
-        if qty > product.stock:
-            messages.error(request, "Requested quantity exceeds available stock.")
-            return redirect("store:product_list")
-
     cart = _get_cart(request)
-    key = str(product.id)
-    if key in cart:
-        cart[key]["qty"] += qty
-    else:
-        cart[key] = {
-            "qty": qty,
-            "price": float(product.price),  # safe for session JSON
-            "name": product.name,
-            "image": product.image_url if getattr(product, "image_url", None) else "",
-        }
-    _save_cart(request, cart)
-    messages.success(request, f"Added {qty} × {product.name} to cart.")
-    return redirect("cart:detail")
+    qty = int(request.POST.get("qty", 1))
+    product = get_object_or_404(Product, pk=product_id)
+    # clamp to stock if stock is tracked
+    if product.stock is not None:
+        qty = max(1, min(qty, int(product.stock)))
+    cart[product_id] = cart.get(product_id, 0) + qty
+    request.session.modified = True
+    return redirect("cart:view")
 
 def remove_from_cart(request, product_id):
     cart = _get_cart(request)
-    key = str(product_id)
-    if key in cart:
-        del cart[key]
-        _save_cart(request, cart)
-        messages.info(request, "Item removed from cart.")
-    return redirect("cart:detail")
+    if product_id in cart:
+        del cart[product_id]
+        request.session.modified = True
+    return redirect("cart:view")
 
 def clear_cart(request):
-    _save_cart(request, {})
-    messages.info(request, "Cart cleared.")
-    return redirect("cart:detail")
-
-def cart_detail(request):
-    cart = _get_cart(request)
-    items = []
-    subtotal = 0.0
-    for pid, row in cart.items():
-        total = row["qty"] * row["price"]
-        subtotal += total
-        items.append({
-            "id": int(pid),
-            "name": row["name"],
-            "qty": row["qty"],
-            "price": row["price"],
-            "total": total,
-            "image": row.get("image") or "",
-        })
-    ctx = {"items": items, "subtotal": subtotal}
-    return render(request, "cart/cart_detail.html", ctx)
+    request.session[CART_SESSION_KEY] = {}
+    request.session.modified = True
+    return redirect("cart:view")
