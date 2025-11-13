@@ -10,7 +10,7 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="{% static 'css/neon.css' %}">
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100">
 
 <header class="top-nav">
     <style>
@@ -40,7 +40,9 @@
             width:10px;height:10px;border-radius:999px;
             background:#22c55e;box-shadow:0 0 12px #22c55e;
         }
-        .nav-links{display:flex;gap:14px;font-size:.95rem;margin-left:24px}
+        .nav-links{
+            display:flex;gap:14px;font-size:.95rem;margin-left:24px;
+        }
         .nav-links a{opacity:.8}
         .nav-links a:hover{opacity:1}
         .search-box{
@@ -52,8 +54,7 @@
             background:#020617;color:#e2e8f0;
         }
         .right-links{
-            display:flex;gap:14px;align-items:center;margin-left:18px;
-            font-size:.9rem;
+            display:flex;gap:14px;align-items:center;margin-left:18px;font-size:.9rem;
         }
         .right-links a{opacity:.9}
         .right-links a:hover{opacity:1}
@@ -78,30 +79,35 @@
     </style>
 
     <div class="nav-inner">
+        <!-- Brand -->
         <a href="{% url 'store:product_list' %}" class="brand">
             <span class="brand-dot"></span>
             <span>G.R Mart</span>
         </a>
 
+        <!-- Nav links -->
         <nav class="nav-links">
             <a href="{% url 'store:product_list' %}">Products</a>
             <a href="{% url 'store:product_list' %}?tag=deals">Today&apos;s Deals</a>
         </nav>
 
+        <!-- Search -->
         <form class="search-box" action="{% url 'store:product_list' %}" method="get">
-            <input type="text" name="q"
+            <input type="text"
+                   name="q"
                    value="{{ request.GET.q|default:'' }}"
                    placeholder="Search products...">
         </form>
 
+        <!-- Right side: cart + auth -->
         <div class="right-links">
-            <!-- CART LINK — IMPORTANT: use cart:view -->
+            <!-- Cart link (uses cart:view URL name) -->
             <a href="{% url 'cart:view' %}" class="cart-pill">
                 <span>Cart</span>
                 <span class="cart-count">{{ cart_items_count|default:0 }}</span>
             </a>
 
-            <!-- Auth links -->
+            <!-- Auth links (simple paths, no reverse errors) -->
             <a href="/accounts/login/">Login</a>
             <a href="/accounts/signup/">Register</a>
         </div>
