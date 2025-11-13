@@ -1,28 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Login • G.R Mart{% endblock %}
 
 {% block content %}
-<div class="container py-4" style="max-width:520px;">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h4 class="mb-3">Login</h4>
+<div class="auth-wrap" style="max-width:420px;margin:40px auto;padding:24px;border-radius:16px;background:#020617;border:1px solid rgba(148,163,184,.25);box-shadow:0 18px 40px rgba(15,23,42,.8);">
+    <h1 style="margin:0 0 16px;font-size:1.4rem;">Login</h1>
 
-      {% if form.errors %}
-        <div class="alert alert-danger">Please check your username/password.</div>
-      {% endif %}
-
-      <form method="post" novalidate>
+    <form method="post" novalidate>
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-      </form>
 
-      <hr class="my-4">
-      <div class="d-flex justify-content-between">
-        <a href="{% url 'password_reset' %}">Forgot password?</a>
-        <a href="{% url 'signup' %}">Create an account</a>
-      </div>
-    </div>
-  </div>
+        <button type="submit"
+                style="margin-top:8px;width:100%;padding:10px 14px;border-radius:999px;border:0;
+                       background:#2563eb;color:#fff;font-weight:600;cursor:pointer;">
+            Login
+        </button>
+    </form>
+
+    <p style="margin-top:16px;font-size:.9rem;color:#94a3b8;">
+        Don&apos;t have an account yet?
+        <a href="{% url 'accounts:signup' %}" style="color:#60a5fa;">Register</a>
+    </p>
+
+    <p style="margin-top:8px;font-size:.85rem;">
+        <a href="{% url 'accounts:password_reset' %}" style="color:#93c5fd;">
+            Forgot your password?
+        </a>
+    </p>
 </div>
 {% endblock %}

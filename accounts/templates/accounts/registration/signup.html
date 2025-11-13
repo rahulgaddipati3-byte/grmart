@@ -1,23 +1,23 @@
 {% extends "base.html" %}
-{% block title %}Sign up • G.R Mart{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-5">
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <h3 class="mb-3 text-center fw-bold">Create account</h3>
-          <form method="post" novalidate>
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="btn btn-primary w-100" type="submit">Sign up</button>
-          </form>
-          <div class="text-center mt-3">
-            Already have an account? <a href="{% url 'login' %}">Login</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="auth-wrap" style="max-width:420px;margin:40px auto;padding:24px;border-radius:16px;background:#020617;border:1px solid rgba(148,163,184,.25);box-shadow:0 18px 40px rgba(15,23,42,.8);">
+    <h1 style="margin:0 0 16px;font-size:1.4rem;">Create your account</h1>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit"
+                style="margin-top:8px;width:100%;padding:10px 14px;border-radius:999px;border:0;
+                       background:#2563eb;color:#fff;font-weight:600;cursor:pointer;">
+            Sign up
+        </button>
+    </form>
+
+    <p style="margin-top:16px;font-size:.9rem;color:#94a3b8;">
+        Already have an account?
+        <a href="{% url 'accounts:login' %}" style="color:#60a5fa;">Log in</a>
+    </p>
 </div>
 {% endblock %}
