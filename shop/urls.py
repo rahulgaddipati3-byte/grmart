@@ -3,20 +3,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views
-from django.views.generic import RedirectView
 
 urlpatterns = [
-    path("", views.home, name="home"),      
     path("admin/", admin.site.urls),
-    path("", include("store.urls")),       # 👈 this includes your store app URLs
-    path("cart/", include("cart.urls")),
-    path("orders/", include("orders.urls")),
-    path("accounts/", include("accounts.urls")),
-    path("accounts/register/", RedirectView.as_view(pattern_name="signup", permanent=False)),
-    path("products/", include("store.urls")),
+
+    # Store (must expose a named 'product_list' view inside store/urls.py)
+    path("", include(("store.urls", "store"), namespace="store")),
+
+    # Cart (needs app_name = "cart" in cart/urls.py)
+    path("cart/", include(("cart.urls", "cart"), namespace="cart")),
+
+    # Accounts (needs app_name = "accounts" in accounts/urls.py)
+    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
 ]
 
-# Serve media (for product images) during development
+# Serve media in dev/Render
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
