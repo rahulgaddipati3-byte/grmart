@@ -1,22 +1,21 @@
 # shop/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    # 👉 send the empty path to the products list
+    path("", RedirectView.as_view(url="/products/", permanent=False), name="home"),
 
-    # Store (must expose a named 'product_list' view inside store/urls.py)
-    path("", include(("store.urls", "store"), namespace="store")),
-
-    # Cart (needs app_name = "cart" in cart/urls.py)
+    # apps
+    path("products/", include("store.urls")),      # store.urls has name="product_list"
     path("cart/", include(("cart.urls", "cart"), namespace="cart")),
-
-    # Accounts (needs app_name = "accounts" in accounts/urls.py)
+    path("orders/", include(("orders.urls", "orders"), namespace="orders")),
     path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("admin/", admin.site.urls),
 ]
 
-# Serve media in dev/Render
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
