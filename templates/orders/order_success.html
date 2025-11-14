@@ -1,16 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Order {{ order.id }} • G.R Mart{% endblock %}
+
+{% block title %}Order Success{% endblock %}
 
 {% block content %}
-  <h2>Thank you! 🎉</h2>
-  <p>Your order <strong>#{{ order.id }}</strong> has been placed successfully.</p>
-
-  <h4 class="mt-4">Items</h4>
-  <ul>
-    {% for item in items %}
-      <li>{{ item.product }} × {{ item.quantity|default:item.qty }} – ₹ {{ item.price }}</li>
-    {% endfor %}
-  </ul>
-
-  <a href="{% url 'store:product_list' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+<div class="container py-5 text-center">
+    <h2 class="mb-2">✅ Your order is confirmed</h2>
+    <p class="text-muted">
+        Order ID: <strong>#{{ order_id }}</strong>
+    </p>
+    <p>
+        Total Amount: <strong>₹{{ order_total_amount }}</strong>
+    </p>
+    <a class="btn btn-primary mt-3" href="{% url 'store:product_list' %}">
+        Continue Shopping
+    </a>
+</div>
 {% endblock %}
