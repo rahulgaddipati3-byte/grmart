@@ -35,16 +35,17 @@
     </form>
 
     <div class="right-links">
-        <!-- Cart link – IMPORTANT: namespaced as cart:view -->
-        <a href="{% url 'cart:view' %}" class="cart-pill">
-            <span>Cart</span>
-            <span class="cart-count">{{ cart_items_count|default:0 }}</span>
-        </a>
+    <!-- Cart link -->
+    <a href="{% url 'cart:detail' %}" class="cart-pill">
+        <span>Cart</span>
+        <span class="cart-count">{{ cart_count|default:0 }}</span>
+    </a>
 
-        <!-- Auth links – these are simple URLs, no extra reverse names -->
-        <a href="/accounts/login/">Login</a>
-        <a href="/accounts/signup/">Register</a>
+    <!-- Auth links -->
+    <a href="/accounts/login/">Login</a>
+    <a href="/accounts/signup/">Register</a>
     </div>
+
 </header>
 
 <main>

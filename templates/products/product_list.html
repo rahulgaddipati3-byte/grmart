@@ -1,49 +1,42 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <h2 class="mb-3">All Products</h2>
+    <h1 class="mb-4">Products</h1>
 
-  <div class="row">
-    {% for product in products %}
-      <div class="col-md-4 mb-4">
-        <div class="card h-100">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for product in products %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% elif product.image_url %}
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
 
-          {# Product Image #}
-          {% if product.image_url %}
-            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
-          {% elif product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" alt "{{ product.name }}">
-          {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text mb-1">₹ {{ product.price }}</p>
 
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">₹{{ product.price }}</p>
-
-            <div class="mt-auto">
-              {# ✅ CORRECT DETAIL URL – namespaced and named product_detail #}
-              <a href="{% url 'store:product_detail' product.id %}"
-                 class="btn btn-sm btn-outline-primary me-2">
-                View
-              </a>
-
-              {# ✅ CORRECT ADD-TO-CART URL #}
-              <form method="post"
-                    action="{% url 'cart:add_to_cart' product.id %}"
-                    class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-primary">
-                  Add to Cart
-                </button>
-              </form>
+                        <div class="mt-auto">
+                            <form action="{% url 'cart:add_to_cart' product.id %}"
+                                  method="post"
+                                  class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Add to cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-
-        </div>
-      </div>
-    {% empty %}
-      <p>No products available.</p>
-    {% endfor %}
-  </div>
+        {% empty %}
+            <p>No products available.</p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
