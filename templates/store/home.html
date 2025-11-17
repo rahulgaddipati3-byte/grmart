@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Welcome to G.R Mart{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row align-items-center">
+        <div class="col-md-6 mb-4">
+            <h1 class="display-5 fw-bold text-white mb-3">
+                Welcome to G.R Mart
+            </h1>
+            <p class="lead text-light mb-4">
+                Smart daily shopping for everything you need – mobiles, gadgets,
+                household items and more. Fast, simple and beautiful.
+            </p>
+
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+                Shop Now
+            </a>
+        </div>
+
+        <div class="col-md-6 mb-4 text-center">
+            <img src="{% static 'store/img/gr-logo.png' %}"
+                 alt="G.R Mart"
+                 class="img-fluid rounded-4 shadow">
+        </div>
+    </div>
+
+</div>
+{% endblock %}
