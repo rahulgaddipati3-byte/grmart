@@ -1,16 +1,16 @@
-# shop/urls.py
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
-from store import views as store_views
 
 urlpatterns = [
-    path("", lambda request: redirect("store:product_list"), name="home"),
     path("admin/", admin.site.urls),
-    path("products/", include(("store.urls", "store"), namespace="store")),
+
+    # 👉 All store URLs (home, products, etc) live at the site root
+    path("", include(("store.urls", "store"), namespace="store")),
+
+    # Cart & orders keep their own namespaces
     path("cart/", include(("cart.urls", "cart"), namespace="cart")),
     path("orders/", include(("orders.urls", "orders"), namespace="orders")),
-    # ✅ IMPORTANT: namespaced include for accounts
+
+    # Accounts
     path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
-    path("", store_views.home, name="home"), 
 ]

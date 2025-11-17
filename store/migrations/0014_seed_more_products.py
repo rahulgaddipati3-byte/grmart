@@ -1,14 +1,6 @@
 from django.db import migrations
 
 # (name, price, stock, image_url)
-ITEMS = [
-    ("Sony Play Station", 49889.00, 50, "https://..."),
-    ("Iphone 16 pro", 800000.00, 80, "https://..."),
-    ("Oneplus 12", 56299.00, 25, "https://..."),
-    ("Apple Macbook Air", 126789.00, 60, "https://..."),
-    ("Apple Watch", 39999.00, 100, "https://..."),
-    ("Samsung Galaxy S25", 124799.00, 40, "https://..."),
-]
 
 
 def seed_products(apps, schema_editor):

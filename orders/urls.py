@@ -8,5 +8,6 @@ app_name = "orders"
 urlpatterns = [
     path("checkout/", views.checkout, name="checkout"),
     path("success/<int:order_id>/", views.success, name="success"),
+    path("history/", views.order_history, name="order_history"),
 ]
 

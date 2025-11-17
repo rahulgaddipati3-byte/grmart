@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if is_deals %}Today's Deals · G.R Mart{% else %}Products · G.R Mart{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- LEFT FILTERS (Amazon style) -->
+        <aside class="col-md-3 mb-4">
+            <div class="card bg-dark border-secondary text-light">
+                <div class="card-header border-secondary">
+                    <strong>Filters</strong>
+                </div>
+                <div class="card-body">
+                    <!-- Deals filter -->
+                    <h6 class="text-muted small">Deals</h6>
+                    <ul class="list-unstyled mb-3">
+                        <li>
+                            <a href="{% url 'store:product_list' %}"
+                               class="small text-decoration-none {% if not is_deals %}text-info{% endif %}">
+                                All products
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:product_list' %}?filter=today"
+                               class="small text-decoration-none {% if is_deals %}text-info{% endif %}">
+                                Today's Deals
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Price filter -->
+                    <h6 class="text-muted small">Price</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="?{% if is_deals %}filter=today&{% endif %}price=under-1000"
+                               class="small text-decoration-none {% if price_filter == 'under-1000' %}text-info{% endif %}">
+                                Under ₹1,000
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?{% if is_deals %}filter=today&{% endif %}price=1000-10000"
+                               class="small text-decoration-none {% if price_filter == '1000-10000' %}text-info{% endif %}">
+                                ₹1,000 – ₹10,000
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?{% if is_deals %}filter=today&{% endif %}price=above-10000"
+                               class="small text-decoration-none {% if price_filter == 'above-10000' %}text-info{% endif %}">
+                                Above ₹10,000
+                            </a>
+                        </li>
+                        <li class="mt-2">
+                            <a href="{% url 'store:product_list' %}{% if is_deals %}?filter=today{% endif %}"
+                               class="small text-decoration-none text-muted">
+                                Clear filters
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN PRODUCT GRID -->
+        <main class="col-md-9">
+            <div class="d-flex align-items-center mb-3">
+                <h1 class="mb-0">
+                    {% if is_deals %}Today's Deals{% else %}Products{% endif %}
+                </h1>
+                {% if is_deals %}
+                    <span class="badge bg-warning text-dark ms-3">Limited time deals</span>
+                {% endif %}
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                {% for product in products %}
+                    <div class="col">
+                        <div class="card h-100 bg-dark border-0 shadow-sm">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}"
+                                     class="card-img-top"
+                                     alt="{{ product.name }}"
+                                     style="object-fit: cover; height: 210px;">
+                            {% elif product.image_url %}
+                                <img src="{{ product.image_url }}"
+                                     class="card-img-top"
+                                     alt="{{ product.name }}"
+                                     style="object-fit: cover; height: 210px;">
+                            {% endif %}
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-light">{{ product.name }}</h5>
+                                <p class="card-text mb-1 text-info fw-semibold">₹ {{ product.price }}</p>
+
+                                {% if is_deals %}
+                                    <span class="badge bg-danger mb-2">Today’s deal</span>
+                                {% endif %}
+
+                                <div class="mt-auto">
+                                    <form action="{% url 'cart:add_to_cart' product.id %}"
+                                          method="post"
+                                          class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                                            Add to cart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">No products found for this filter.</p>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

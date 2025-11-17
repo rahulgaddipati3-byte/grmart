@@ -1,50 +1,144 @@
 {% extends "base.html" %}
-{% block title %}Welcome • G.R Mart{% endblock %}
+{% load static %}
+
+{% block title %}Welcome · G.R Mart{% endblock %}
 
 {% block content %}
-<section class="hero py-5">
-  <div class="container">
-    <div class="row align-items-center gy-4">
-      <div class="col-lg-6">
-        <h1 class="display-5 fw-bold mb-3">Welcome to <span class="text-primary">G.R Mart</span></h1>
-        <p class="lead text-secondary mb-4">
-          Discover phones, wearables, fashion and more—at great prices. Start shopping now!
-        </p>
-        <div class="d-flex gap-2">
-          <a class="btn btn-primary btn-lg" href="{% url 'product_list' %}">Shop now</a>
-          {% if not request.user.is_authenticated %}
-            <a class="btn btn-outline-primary btn-lg" href="{% url 'login' %}">Login</a>
-            <a class="btn btn-outline-secondary btn-lg" href="/accounts/signup/">Register</a>
-          {% else %}
-            <a class="btn btn-outline-secondary btn-lg" href="{% url 'logout' %}"
-               onclick="event.preventDefault(); this.closest('a').nextElementSibling.submit();">Logout</a>
-            <form action="{% url 'logout' %}" method="post" class="d-none">{% csrf_token %}</form>
-          {% endif %}
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="p-3 p-lg-5 bg-white rounded-4 shadow-sm border">
-          <div class="row text-center g-3">
-            <div class="col-6"><div class="p-4 rounded-3 bg-light">Mobiles</div></div>
-            <div class="col-6"><div class="p-4 rounded-3 bg-light">Audio</div></div>
-            <div class="col-6"><div class="p-4 rounded-3 bg-light">Clothing</div></div>
-            <div class="col-6"><div class="p-4 rounded-3 bg-light">Groceries</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<div class="container py-5">
-  <div class="row align-items-center">
-    <div class="col-lg-8">
-      <h2 class="h4 mb-2">Why shop with us?</h2>
-      <p class="text-secondary mb-0">Fast checkout, secure payments, and curated products you’ll love.</p>
+{# Page-local animations – only affect this page #}
+<style>
+    /* Animated gradient background */
+    .gr-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        padding: 2.5rem 2rem;
+        background: radial-gradient(circle at 0% 0%, #4f46e5, #020617);
+        isolation: isolate;
+    }
+
+    .gr-hero::before {
+        content: "";
+        position: absolute;
+        inset: -40%;
+        background: conic-gradient(
+            from 180deg,
+            #6366f1,
+            #ec4899,
+            #22c55e,
+            #6366f1
+        );
+        opacity: 0.25;
+        filter: blur(40px);
+        animation: grGradientSpin 18s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes grGradientSpin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Fade-up animation */
+    @keyframes grFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .gr-fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: grFadeUp 0.8s ease-out forwards;
+    }
+
+    .gr-delay-1 { animation-delay: 0.10s; }
+    .gr-delay-2 { animation-delay: 0.25s; }
+    .gr-delay-3 { animation-delay: 0.40s; }
+
+    /* Soft pulse on main CTA */
+    @keyframes grPulse {
+        0%, 100% {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 0.5rem 1.5rem rgba(79, 70, 229, 0.35);
+        }
+        50% {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0.8rem 2rem rgba(79, 70, 229, 0.6);
+        }
+    }
+
+    .gr-pulse {
+        animation: grPulse 2.2s ease-in-out infinite;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <!-- HERO SECTION -->
+    <div class="gr-hero mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h1 class="display-5 fw-bold text-white gr-fade-up gr-delay-1">
+                    Welcome to <span class="text-primary">G.R Mart</span>
+                </h1>
+
+                <p class="lead text-muted mt-3 gr-fade-up gr-delay-2">
+                    Your smart daily shopping partner – mobiles, laptops,
+                    headphones and more. Curated products, quick checkout,
+                    and a smooth shopping experience.
+                </p>
+
+                <div class="mt-4 d-flex flex-wrap gap-2 gr-fade-up gr-delay-3">
+                    <a href="/products/" class="btn btn-primary btn-lg gr-pulse">
+                        Start Shopping
+                    </a>
+                    <a href="/accounts/signup/" class="btn btn-outline-light btn-lg">
+                        Create an Account
+                    </a>
+                </div>
+
+                <div class="mt-4 text-light small gr-fade-up gr-delay-3">
+                    • Secure checkout &nbsp; • Modern dark UI &nbsp; • Built with Django
+                </div>
+            </div>
+
+            <div class="col-md-6 gr-fade-up gr-delay-2">
+                <div class="card border-0 shadow-lg text-light"
+                     style="background: rgba(15, 23, 42, 0.9);">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">Why shop at G.R Mart?</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">🛒 Hand-picked premium gadgets</li>
+                            <li class="mb-2">⚡ Fast cart & checkout flow</li>
+                            <li class="mb-2">🌓 Beautiful responsive layout</li>
+                            <li>📦 Easy to extend with more categories & offers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-      <a href="{% url 'product_list' %}" class="btn btn-primary">Browse products</a>
+
+    <!-- FEATURE STRIP -->
+    <div class="row text-center text-muted">
+        <div class="col-md-4 mb-3 gr-fade-up gr-delay-1">
+            <h6 class="text-white">Quality Products</h6>
+            <p class="small">Top phones, laptops, headphones and more.</p>
+        </div>
+        <div class="col-md-4 mb-3 gr-fade-up gr-delay-2">
+            <h6 class="text-white">Smart Cart</h6>
+            <p class="small">Add to cart quickly and review in one place.</p>
+        </div>
+        <div class="col-md-4 mb-3 gr-fade-up gr-delay-3">
+            <h6 class="text-white">Django Powered</h6>
+            <p class="small">Dynamic, secure and ready for real orders.</p>
+        </div>
     </div>
-  </div>
 </div>
+
 {% endblock %}

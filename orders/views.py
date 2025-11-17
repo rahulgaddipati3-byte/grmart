@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from store.models import Product
 from .models import Order, OrderItem
+from django.shortcuts import render
 
 
 def _build_cart_items(request):
@@ -93,3 +94,7 @@ def success(request, order_id):
         "total_amount": total_amount,
     }
     return render(request, "orders/success.html", context)
+@login_required
+def order_history(request):
+    # Later you can show real orders. For now just a placeholder page.
+    return render(request, "orders/order_history.html")

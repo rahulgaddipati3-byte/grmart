@@ -15,4 +15,5 @@ urlpatterns = [
 
     # Clear entire cart
     path("clear/", views.clear_cart, name="clear_cart"),
+    path("", views.cart_detail, name="cart_detail"),
 ]

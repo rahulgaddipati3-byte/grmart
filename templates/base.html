@@ -1,4 +1,6 @@
-﻿{% load static %}
+﻿
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,58 +24,117 @@
 <body class="{% block body_class %}cart-page{% endblock %}">
 
     <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/products/">G.R Mart</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary shadow-sm">
+    <div class="container-fluid px-4">
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#mainNavbar" aria-controls="mainNavbar"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- Logo + mini address (like Amazon) -->
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'store:home' %}">
+            <span class="fw-bold">G.R Mart</span>
+        </a>
 
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products/">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products/">Today's Deals</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cart/">Cart</a>
-                    </li>
-                </ul>
-
-                <!-- Search -->
-                <form class="d-flex me-3" method="get" action="/products/">
-                    <input class="form-control me-2" type="search"
-                           name="q" placeholder="Search products..."
-                           aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
-
-                <!-- Auth links -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="nav-link disabled">Hi, {{ user.username }}</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/accounts/logout/">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/accounts/login/">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+        <div class="d-none d-md-flex flex-column ms-3 text-white-50 small">
+            <span class="text-muted">Deliver to</span>
+            <span><i class="bi bi-geo-alt"></i> Your address</span>
         </div>
-    </nav>
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#grNavbar" aria-controls="grNavbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="grNavbar">
+            <!-- Centre search like Amazon -->
+            <form class="d-flex mx-lg-4 my-2 my-lg-0 flex-grow-1" method="get" action="{% url 'store:product_list' %}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search products..."
+                       aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+
+            <!-- Right menu -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+
+                <!-- Main menu items -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'product_list' and not is_deals %}active{% endif %}"
+                       href="{% url 'store:product_list' %}">
+                        Products
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if is_deals %}active{% endif %}"
+                       href="{% url 'store:product_list' %}?filter=today">
+                        Today's Deals
+                    </a>
+                </li>
+
+                <!-- Account dropdown -->
+                <li class="nav-item dropdown ms-lg-2">
+                    <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.is_authenticated %}
+                            Hi, {{ user.username }}
+                        {% else %}
+                            Hello, sign in
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary"
+                        aria-labelledby="accountDropdown">
+                        {% if user.is_authenticated %}
+                            <li>
+                                <a class="dropdown-item text-light" href="{% url 'orders:order_history' %}">
+                                    Order history
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{% url 'accounts:manage_addresses' %}">
+                                    Manage addresses
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider border-secondary"></li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{% url 'accounts:logout' %}">
+                                    Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="dropdown-item text-light" href="{% url 'accounts:login' %}">
+                                    Login
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{% url 'accounts:signup' %}">
+                                    Register
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-light" href="{% url 'accounts:password_reset' %}">
+                                    Forgot password
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </li>
+
+                <!-- Cart icon -->
+                <li class="nav-item ms-3">
+                    <a class="nav-link position-relative" href="{% url 'cart:cart_detail' %}">
+                        <i class="bi bi-cart3"></i>
+                        <span>Cart</span>
+                        {% if cart_item_count %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ cart_item_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
     <!-- Optional dark category strip (matches neon.css) -->
     <div class="nav-strip">
