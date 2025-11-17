@@ -1,43 +1,44 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Login · G.R Mart{% endblock %}
+
 {% block content %}
-<div class="auth-page">
-    <div class="auth-card">
-        <h1 class="text-2xl font-semibold mb-6">Log in</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h1 class="h4 mb-3 text-center">Login</h1>
 
-        <form method="post" novalidate>
-            {% csrf_token %}
-            {{ form.as_p }}
+                    {% if form.errors %}
+                        <div class="alert alert-danger small">
+                            Please correct the error{{ form.errors|length|pluralize }} below.
+                        </div>
+                    {% endif %}
 
-            <button type="submit" class="btn-primary w-full mt-4">
-                Log in
-            </button>
-        </form>
+                    {% if next %}
+                        <p class="text-muted small mb-3 text-center">
+                            Please log in to continue.
+                        </p>
+                    {% endif %}
 
-        <div class="mt-4 text-sm text-slate-400">
-            <!-- We REMOVE the password_reset url to avoid NoReverseMatch -->
-            <p>Forgot your password? <span class="text-slate-500">Password reset is not enabled.</span></p>
-        </div>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form.as_p }}
 
-        <div class="mt-4 text-sm text-slate-400">
-            <p>
-                Don’t have an account?
-                <a href="{% url 'accounts:signup' %}" class="link-primary">Sign up</a>
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            Login
+                        </button>
+                    </form>
 
-            </p>
+                    <div class="mt-3 text-center text-muted small">
+                        <!-- No signup URL configured, so just show an info text -->
+                        Forgot your password? 
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
-<form method="post" class="space-y-4">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <button type="submit"
-            class="w-full py-2 px-4 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold">
-        Login
-    </button>
-</form>
-
-
