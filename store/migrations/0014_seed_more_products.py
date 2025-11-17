@@ -4,16 +4,12 @@ from django.db import migrations
 def seed_products(apps, schema_editor):
     Product = apps.get_model("store", "Product")
     items = [
-        {"name": "iPhone 15", "price": 79900, "stock": 20,
-         "image_url": "https://images.unsplash.com/photo-1695047996728-b4-iphone15?w=1200"},
-        {"name": "Samsung Galaxy S24", "price": 69900, "stock": 25,
-         "image_url": "https://images.unsplash.com/photo-1701000000000-galaxy-s24?w=1200"},
-        {"name": "Sony WH-1000XM5", "price": 29990, "stock": 30,
-         "image_url": "https://images.unsplash.com/photo-1651000000000-sony-xm5?w=1200"},
-        {"name": "Dell XPS 13", "price": 124990, "stock": 10,
-         "image_url": "https://images.unsplash.com/photo-1555617117-08d3e5d8d9b7?w=1200"},
-        {"name": "Nike Air Max", "price": 9990, "stock": 40,
-         "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200"},
+        ("Sony Play Station ", 49889.00, 50, "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcSz_TLFvvvTE8I4NTNLoxbnOlHBW61qNGLr92vWfYrwg-riGo0SiTcXaU4onAVF5XAoshL8R77XliY9x2XDMP2k8fKuODQGrCYS5-b6nEams18zNKj-ma14uj4DexdRbb3wYQXuPxA&usqp=CAc"),
+        ("Iphone 16 pro", 890000.00, 80, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2d3I68z-L4lU7DaXQ76IyA5XkcSoee0kthw&s"),
+        ("Oneplus 12", 56299.00, 25, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRENsP3VvhBafIg3OkWYR1xQONvOBhaZ33WMA&s"),
+        ("Apple Macbook Air", 126789.00, 60, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMzTx4EXGAsLKYXCkQwrf8pMyUXGWPArDXfQ&s"),
+        ("Apple Watch", 39999.00, 100, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK35c0TiZ8-aixothHxbwutDO3bJkS7LHs9Q&s"),
+        ("Samsung Galaxy S25", 124799.00, 40, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKvt0gBzYa7Nn9IQ5JyN611IHGpbRgox5Aaw&s"),
     ]
     for it in items:
         Product.objects.update_or_create(
