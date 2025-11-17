@@ -1,7 +1,7 @@
 # store/views.py
 from django.shortcuts import render
 from .models import Product
-
+from django.shortcuts import render, redirect
 
 def home(request):
     """
@@ -41,3 +41,7 @@ def product_list(request):
         "price_filter": price_filter,
     }
     return render(request, "store/product_list.html", context)
+def today_deals(request):
+    # For now, just reuse product list or some simple page
+    return redirect("store:product_list")
+    # or: return render(request, "store/today_deals.html"
